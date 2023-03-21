@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>REYES GODOS. BUSCAMAN</title>
+</head>
+
+<body>
+    <script>
+        var vikings = '{"vikingos":[{"reino":"Noruega","reyes":["Hakon","Harald",["Ivar",["Olaf","Lars","Lasse"],"Bjorn"],"Ragnar"]},{"reino":"Dinamarca","reyes":["Frodo","Hamming",["Angantyr","Sarunas"],"Horik"]}]}';
+        // skriv inn koden din her. Vær forsiktig med at json-en jukser. Det er ikke en matrise, men et objekt.
+
+        const reyGodo = (nombre) => {
+        //Parseamos el json para que sea una lista y no un objeto
+        let lista = JSON.parse(vikings);
+
+        //Mapeamos la lista
+        lista.vikingos.map((x) => {
+            //Para que todas las listas de reyes se recorran como si fueran una
+            let reyesEnMismaLista= x.reyes.flat(Infinity);
+            
+            //En caso de que se encuentre un rey con ese nombre manda un mensaje
+          if (reyesEnMismaLista.find((y) => nombre == y)) {
+            console.log("Se encuentra en la lista");
+          }
+        });
+      };
+      
+      //Ejemplo de ejecución
+      reyGodo("Sarunas");
+
+    </script>
+
+</body>
+
+</html>

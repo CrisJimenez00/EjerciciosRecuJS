@@ -1,0 +1,87 @@
+<html>
+  <head>
+    <title>retos JavaScript</title>
+  </head>
+  <body>
+    <h1>retos JavaScript</h1>
+    <script>
+      var cars = [
+        "Saab",
+        "Volvo",
+        "BMW",
+        ["Honda", "Toyota", ["Lexus", "Mercedes", "Lada"], "Hyunday"],
+      ];
+      var carrakos = [
+        "Chevrolet",
+        "Tesla",
+        "BMW",
+        ["Honda", "Infiniti", ["Lexus", "Mercedes", "Kia"], "Hyunday"],
+        ["Mazda", "Mercedes", "Jeep", ["KTM", "Nissan", "Isuzu"]],
+      ];
+      //Alguien sabe hacer una lista única de coches con los dos arrays (sin repeticiones)?
+      //Primero hacemos que no haya subcadenas
+      cars = cars.flat(Infinity);
+      carrakos = carrakos.flat(Infinity);
+      //Filtramos para que salgan los que están en carrakos y en cars
+      let listaSinRepetir = cars.filter((x) => carrakos.find((y) => x == y));
+      console.log("Parte 1:");
+      console.log(listaSinRepetir);
+      console.log("------------------");
+
+      //Alguien sabría decirme los coches de carrakos que no estén en cars?
+      //Filtramos los que estan en carrakos y no en cars.
+      let listaUnica = carrakos.filter((x) => !cars.find((y) => x == y));
+      console.log("Parte 2:");
+      console.log(listaUnica);
+      console.log("------------------");
+
+      var cars = [
+        "Saab",
+        "Volvo",
+        "BMW",
+        ["Honda", "Toyota", ["Lexus", "Mercedes", "Lada"], "Hyunday"],
+      ];
+      var buddies = [
+        { firstName: "Chuck", lastName: "Norris", car: "Honda" },
+        { firstName: "Yakie", lastName: "Chang", car: "BMW" },
+        { firstName: "Bruce", lastName: "Lee", car: "Honda" },
+        { firstName: "Steven", lastName: "Seagal", car: "Lada" },
+      ];
+      //-Nombre y apellidos de los buddies que usan un Honda
+      buddies = buddies.flat(Infinity);
+      cars=cars.flat(Infinity);
+      //Filtramos y después mapeamos el resultado para que nos devuelva lo que deseamos
+      let listaHonda = buddies
+        .filter((x) => x.car == "Honda")
+        .map((y) => y.firstName + " " + y.lastName);
+      console.log("Parte 3:");
+      console.log(listaHonda);
+      console.log("------------------");
+
+      //-Marcas utilizadas por los buddies
+      let listaMarcas = buddies.map(x=>x.car);
+      console.log("Parte 4:");
+      console.log(listaMarcas);
+      console.log("------------------");
+
+      //-Marcas no utilizadas por los buddies.
+      let listaMarcasNoBuddies = cars.filter(x=>!buddies.find((y) => x == y.car));
+      console.log("Parte 5:");
+      console.log(listaMarcasNoBuddies);
+      console.log("------------------");
+
+      //-Cuantas marcas han sido utilizadas
+      let marcasUsadas= cars.filter(x=>buddies.find((y) => x == y.car)).length;
+      console.log("Parte 6:");
+      console.log(marcasUsadas);
+      console.log("------------------");
+
+      //-Cuantas marcas no han sido utilizadas
+      let marcasNoUsadas= cars.filter(x=>!buddies.find((y) => x == y.car)).length;
+      console.log("Parte 7:");
+      console.log(marcasNoUsadas);
+      console.log("------------------");
+
+    </script>
+  </body>
+</html>

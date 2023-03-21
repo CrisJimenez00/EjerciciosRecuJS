@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <p id="resultado"></p>
+    <input type="text" id="ciudad" placeholder="Inserta la primera letra" />
+    <button onclick="funcionalidad()">ejecuta</button>
+
+    <script>
+      //creamos la lista
+      let ciudades = [
+        { cp: 28680, ciudad: "ESTEPONA" },
+        { cp: 04700, ciudad: "EL EJIDO" },
+        { cp: 41400, ciudad: "ECIJA" },
+        { cp: 11379, ciudad: "PALMONES" },
+        { cp: 11201, ciudad: "ALGECIRAS" },
+        { cp: 11370, ciudad: "LOS BARRIOS" },
+        { cp: 29601, ciudad: "MARBELLA" },
+      ];
+
+      function funcionalidad() {
+        //Hacemos primero un mapeo de la lista creada
+        ciudades.map((valor) => {
+          //Metemos en una variable el contenido de lo que busca el usuario en mayúsculas
+          let buscador = document.getElementById("ciudad").value.toUpperCase();
+
+          //En caso de que lo encuente aunque sea una sola vez lo devolverá
+          if (valor.ciudad.includes(buscador)) {
+            document.getElementById("resultado").innerHTML =
+              "<strong>Ciudad:</strong> " +
+              valor.ciudad +
+              "  <strong>CP:</strong>" +
+              valor.cp;
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

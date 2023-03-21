@@ -1,0 +1,36 @@
+<html>
+
+<head>
+    <title>retos JavaScript</title>
+</head>
+
+<body>
+
+  
+    <h1>retos JavaScript</h1>
+    <ul id="frutas">   </ul>
+
+    <script>
+
+
+        let frutas = ["aguacate", "pera", "manzana", "naranja", "tomate", "granada", "mango", "litchi", "nispero"];
+        // muestra las frutas como elementos li y su nodo padre será el ul frutas
+        //Primero seleccionamos el elemnto que va a contener todo
+       var lista = document.getElementById("frutas");
+
+        frutas.map(x=>{
+            //Creamos el elemento li el cual va a mostrar la fruta
+            let li = document.createElement("li");
+            //Creamos un nodo de texto que contiene el valor de la posición de la lista
+            let contenido= document.createTextNode(x);
+            //Con esto metemos el contenido(tipo texto) dentro de la etiqueta li
+            li.appendChild(contenido);
+            //Y con esto metemos todo lo que contiene li(incluidos hijos) dentro del elemento lista
+            lista.appendChild(li);
+            //Con esto quedaría de la siguiente forma: lista > li > x
+        });
+    </script>
+
+</body>
+
+</html>

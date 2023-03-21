@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <p id="result"></p>
+    <script>
+      var valumnos = {
+        alumnos: [
+          {
+            nombre: "Fulanito",
+            notas: {
+              DWEC: 8,
+              DWESE: 0.71,
+              ED: 7.04,
+              SSOO: 3.37,
+              BBDD: 0.22,
+              PROG: 1.09,
+              EINEM: 6.17,
+            },
+          },
+          {
+            nombre: "Menganito",
+            notas: {
+              DWEC: 7,
+              DWESE: 0.71,
+              ED: 7.04,
+              SSOO: 3.37,
+              BBDD: 0.22,
+              PROG: 1.09,
+              EINEM: 6.17,
+            },
+          },
+          {
+            nombre: "Cetanito",
+            notas: {
+              DWEC: 6,
+              DWESE: 0.71,
+              ED: 7.04,
+              SSOO: 3.37,
+              BBDD: 0.22,
+              PROG: 1.09,
+              EINEM: 6.17,
+            },
+          },
+        ],
+      };
+      
+      //Creamos una variable la cual va a tener las medias individuales
+      let media = 0;
+      //Mapeamos la lista
+      valumnos.alumnos.map((x) => {
+        //Hacemos una lista con todas las notas
+        let listaNotas = Object.values(x.notas);
+        //Vamos sumando(acumulando) todos los valores que se encuentran en las variables notas
+        media += listaNotas.reduce((acumulador, valor)=>{
+          acumulador+=valor;
+          return acumulador;
+          //Una vez acabado lo dividimos entre el número de signaturas que hay
+        })/listaNotas.length;
+      });
+
+      //Una vez lo hemos sumado las 3 medias, lo dividimos entre la cantidad de alumnos que hay y lo mostramos por consola
+      console.log(media/valumnos.alumnos.length);
+
+    </script>
+  </body>
+</html>

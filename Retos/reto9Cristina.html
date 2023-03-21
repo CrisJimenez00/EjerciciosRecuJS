@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <title>retos JavaScript</title>
+  </head>
+
+  <body>
+    <h1>retos JavaScript</h1>
+    <ul id="carrakos"></ul>
+
+    <script>
+      var carrakos = [
+        "Chevrolet",
+        "Tesla",
+        "BMW",
+        ["Honda", "Infiniti", ["Lexus", "Mercedes", "Kia"], "Hyunday"],
+        ["Mazda", "Mercedes", "Jeep", ["KTM", "Nissan", "Isuzu"]],
+      ];
+      let xungos = [
+        { nombre: "Bruce Lee", carros: ["Chevrolet", "Tesla", "BMW"] },
+        { nombre: "YakiChan", carros: ["Lexus", "Mercedes", "Kia"] },
+      ];
+
+      function listar(array, padre) {
+        //Primero mapeamos para ver cada posición de la lista
+        array.map((i) => {
+          //Si es un array(es decir, hay hijos)
+          if (Array.isArray(i)) {
+            //Creamos un elemento ul en esa posición y dentro de ella metemos el li
+            let ul = document.createElement("ul");
+            //metemos ul en el padre
+            padre.appendChild(ul);
+            //llamamos de nuevo al método para que pase a la nueva lista hija
+            listar(i, ul);
+          } else {
+            //Creamos el elmento li
+            let li = document.createElement("li");
+
+            //Buscamos los carros que coincidan de xungos y de la lista que estamos mapeando(carrakos)
+            let nombreXungo = xungos.find((x) => x.carros.find((y) => y == i));
+            let contenido;
+
+            //en caso de que no se encuentre coincidencia, sale el coche solo
+            if (nombreXungo == undefined) {
+              contenido = document.createTextNode(i);
+
+              //En caso de que si se encuentre coincidencia se crea un texto
+            } else {
+              contenido = document.createTextNode(
+                i + " de " + nombreXungo.nombre
+              );
+            }
+            
+            //Padre > li > contenido
+            li.appendChild(contenido);
+            padre.appendChild(li);
+          }
+        });
+      }
+
+      listar(carrakos, document.getElementById("carrakos"));
+    </script>
+  </body>
+</html>

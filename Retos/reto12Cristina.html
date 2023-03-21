@@ -1,0 +1,48 @@
+<html>
+  <head>
+    <title>retos JavaScript</title>
+  </head>
+
+  <body>
+    <h1>retos JavaScript</h1>
+    <ul id="carrakos"></ul>
+
+    <script>
+      let carrakos = [
+        "Chevrolet",
+        "Tesla",
+        "BMW",
+        ["Honda", "Infiniti", ["Lexus", "Mercedes", "Kia"], "Hyunday"],
+        ["Mazda", "Mercedes", "Jeep", ["KTM", "Nissan", "Isuzu"]],
+      ];
+      let xungos = [
+        { nombre: "Bruce Lee", carros: ["Chevrolet", "Tesla", "BMW"] },
+        { nombre: "Steven Seagal", carros: ["Mazda", "Jeep", "Nissan"] },
+        { nombre: "YakiChan", carros: ["Lexus", "Mercedes", "Kia"] },
+      ];
+
+      //Hacemos un flat en carrakos
+      let lista = carrakos.flat(Infinity);
+
+      //Mapeamos la lista de coches
+      lista.map((x) => {
+        //creamos un objeto en el cual se va a encontrarel nombre del vehiculo y el propietario
+        let obj = new Object();
+        //Miramos si los nombres de coche se encuentran en la lista de carros
+        let tmp = xungos.find((y) => y.carros.includes(x));
+        //Como sabemos que el nombre del vehiculo existe siempre lo dejamos fijo
+        obj.nombre = x;
+        //Pero el dueño puede variar por eso hacemos lo siguiente:
+        //Si no está en la lista la variable del objeto llamado propietario se rellena con el String nadie
+        if (tmp == undefined) {
+          obj.propietario = "nadie";
+          //En caso se que exista la variable propietario contiene el nombre
+        } else {
+          obj.propietario = tmp.nombre;
+        }
+        //mostramos por consola el resultado
+        console.log(obj);
+      });
+    </script>
+  </body>
+</html>

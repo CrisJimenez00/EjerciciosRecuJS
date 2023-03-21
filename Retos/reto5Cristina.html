@@ -1,0 +1,39 @@
+<html>
+  <head>
+    <title>retos JavaScript</title>
+  </head>
+  <body>
+    <h1>retos JavaScript</h1>
+    <script>
+      let frutas = [
+        "aguacate",
+        "pera",
+        "manzana",
+        "naranja",
+        "tomate",
+        "granada",
+        "mango",
+        "litchi",
+        "nispero",
+      ];
+      let tropicales = ["aguacate", "mango", "litchi", "nispero"];
+      let tropicStock = [
+        { fruta: "aguacate", stock: 50 },
+        { fruta: "mango", stock: 10 },
+        { fruta: "litchi", stock: 20 },
+        { fruta: "nispero", stock: 25 },
+      ];
+      // frutas del array frutas que sean tropicales
+      let frutasTropicales= frutas.filter(x=>tropicales.find(y=>x==y));
+      console.log("Ejercicio 1");
+        console.log(frutasTropicales);
+      // frutas del array frutas que NO sean tropicales
+        let frutasNoTropicales=frutas.filter(x=>!tropicales.find(y=>x==y));
+        console.log("Ejercicio 2");
+        console.log(frutasNoTropicales);
+      //Nombre de las frutas con un stock mayor de 21
+      let stock21=frutas.filter(x=>tropicStock.find(y=>x==y.fruta && y.stock>21));
+      console.log(stock21);
+    </script>
+  </body>
+</html>
