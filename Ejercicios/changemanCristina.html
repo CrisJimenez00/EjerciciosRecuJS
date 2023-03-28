@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Changeman Cristina</title>
+  </head>
+  <body>
+    <ol id="lista">
+      <li>Perico</li>
+      <li>Juanico</li>
+      <ul>
+        <li>Jose</li>
+        <ul>
+          <li>Roman</li>
+          <li>Marco</li>
+          <li>Rodrigo</li>
+        </ul>
+        <li>Jose</li>
+        <li>Lorenzo</li>
+        <ul>
+          <li>Dimas</li>
+          <li>Gestas</li>
+          <li>Malakatos</li>
+          <li>Jose</li>
+        </ul>
+      </ul>
+      <li>Sofoclis</li>
+    </ol>
+    <script>
+        
+        function cambiaNombres(elemento, nombre1, nombre2) {
+        //Recorremos la lista con for(con Array.from().map() da error)
+          for (let i = 0; i < elemento.children.length; i++) {
+            //Si coincide el elemento con el nombre 1
+            if (elemento.children[i].innerHTML.toLowerCase() === nombre1.toLowerCase()) {
+                //Se cambia por el nombre 2
+                elemento.children[i].innerHTML = nombre2;
+            }
+            //Momento de comprobar los hijos
+            let hijo = elemento.children[i].children;
+            if (hijo.length != "") {
+              cambiaNombres(elemento.children[i], nombre1, nombre2);
+            }
+          }
+        }
+        cambiaNombres(document.getElementById("lista"), "JOSE", "PEPE");
+      </script>
+  </body>
+</html>
+

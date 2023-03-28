@@ -33,5 +33,41 @@
       <li>Juanele</li>
       <li>Jose</li>
     </ol>
+    <script>
+      //Metemos los nombres clave(infectados) en una variable
+      var lista2 = document.getElementById("lista2");
+      //console.log(Array.from(lista2.children));
+
+      //Hacemos un array a partir de lo que contiene dentro lista 2
+      var arrayNombres = Array.from(lista2.children).reduce((acumulador, elemento) => {
+        //Si no lo hacemos así nos sale li, li, li.
+        acumulador.push(elemento.textContent);
+        return acumulador;
+      }, []);
+
+      function confinaman(x) {
+        //Si tiene hijos entra y comprobamos
+        if (x.children.length > 0) {
+          //Hacemos una lista de los hijos y lo mapeamos
+          Array.from(x.children).map((elemento) => {
+            //Si el elemento y alguno de los nombre de la lista coincide
+            if (arrayNombres.includes(elemento.textContent)) {
+              //Vamos al nodo padre
+              let padre = elemento.parentNode;
+
+              //Y en todos le añadimos (C) para saber que tienen que estar confinados
+              Array.from(padre.children).map((nombre) => {
+                if (nombre.tagName == "LI") nombre.innerHTML += " (C)";
+              });
+            }
+
+            confinaman(elemento);
+          });
+        }
+      };
+
+      const lista = document.getElementById("lista1");
+      confinaman(lista);
+    </script>
   </body>
 </html>
