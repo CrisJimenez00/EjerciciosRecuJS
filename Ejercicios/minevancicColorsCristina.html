@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!doctype html>
+    <html lang="en">
+      <head>
+        <title>Title</title>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+      
+    <title>Minevancic</title>
+</head>
+
+<body>
+    <h1>Minevancic</h1>
+    <script>
+        function generarNumeroAleatorio(min, max) {
+            return Math.floor(Math.random() * (max - min)) + min;
+        }
+
+        function generarCampo() {
+            let campo = [];
+            for (let i = 0; i < 10; i++) {
+                campo[i] = [];
+                for (let j = 0; j < 10; j++) {
+                    let a = generarNumeroAleatorio(0, 5);
+                    if (a == 3) {
+                        campo[i][j] = 1;
+                    } else {
+                        campo[i][j] = 0;
+                    }
+                }
+            }
+            return campo;
+        }
+
+        let minas = generarCampo();
+        console.table(minas);
+
+        function distancias(minas) {
+            let nueva = [];
+            for (let i = 0; i < minas.length; i++) {
+                nueva[i] = [];
+                for (let j = 0; j < minas[i].length; j++) {
+                    if (minas[i][j] == 1) {
+                        nueva[i][j] = 1;
+                    } else {
+                        nueva[i][j] = 0;
+                    }
+                }
+            }
+            for (let i = 0; i < minas.length; i++) {
+                for (let j = 0; j < minas[i].length; j++) {
+                    if (minas[i][j] == 0) {
+                        let dist = 1;
+                        let encontrado = false;
+                        while (!encontrado) {
+                            for (let k = i - dist; k <= i + dist; k++) {
+                                for (let l = j - dist; l <= j + dist; l++) {
+                                    if (k >= 0 && k < minas.length && l >= 0 && l < minas[i].length) {
+                                        if (minas[k][l] == 1) {
+                                            nueva[i][j] = dist + 1;
+                                            encontrado = true;
+                                        }
+                                    }
+                                }
+                            }
+                            dist++;
+                        }
+                    }
+                }
+            }
+            return nueva;
+        }
+
+        console.table(distancias(minas));
+
+        function color(campo) {
+            let html = "<table>";
+            for (let i = 0; i < campo.length; i++) {
+                html += "<tr>";
+                for (let j = 0; j < campo[i].length; j++) {
+                    html += "<td><button style='background-color: ";
+                    if (campo[i][j] == 5) {
+                        html += "white";
+                    } else if (campo[i][j] == 1) {
+                        html += "red";
+                    } else if (campo[i][j] == 2) {
+                        html += "yellow";
+                    } else if (campo[i][j] == 3) {
+                        html += "green";
+                    } else if (campo[i][j] == 4) {
+                        html += "blue";
+                    } else {
+                        html += "black";
+                    }
+                    html += "'>" + campo[i][j] + "</td>";
+                }
+                html += "</tr>";
+            }
+            html += "</table>";
+            document.body.innerHTML += html;
+        }
+        color(distancias(minas));
+    </script>
+</body>
+
+</html>
