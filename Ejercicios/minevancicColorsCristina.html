@@ -1,114 +1,127 @@
 <!DOCTYPE html>
 <html lang="es">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!doctype html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!DOCTYPE html>
     <html lang="en">
       <head>
-        <title>Title</title>
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-      
-    <title>Minevancic</title>
-</head>
+        <link
+          rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+          integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+          crossorigin="anonymous"
+        ></script>
+        <script
+          src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+          integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+          crossorigin="anonymous"
+        ></script>
+        <script
+          src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+          integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+          crossorigin="anonymous"
+        ></script>
+        <title>Minevancic</title>
+      </head>
 
-<body>
-    <h1>Minevancic</h1>
-    <script>
-        function generarNumeroAleatorio(min, max) {
+      <body>
+        <h1>Minevancic</h1>
+        <script>
+          //Método el cual genera un número aleatorio(lo usaremos para generar la tabla)
+          function generarNumeroAleatorio(min, max) {
+            //Math.random al pones números decimales necesitamos redondearlo hacia abajo
             return Math.floor(Math.random() * (max - min)) + min;
-        }
+          }
 
-        function generarCampo() {
-            let campo = [];
+          function generarTablero() {
+            //Generamos un array tablero vacio
+            let tablero = [];
+            //Rellenamos cada fila del tablero de otro array(columnas)
             for (let i = 0; i < 10; i++) {
-                campo[i] = [];
-                for (let j = 0; j < 10; j++) {
-                    let a = generarNumeroAleatorio(0, 5);
-                    if (a == 3) {
-                        campo[i][j] = 1;
-                    } else {
-                        campo[i][j] = 0;
-                    }
-                }
+              tablero[i] = [];
+              //Recorremos cada columna de cada fila y lo rellenamos de 0 y 1
+              for (let j = 0; j < 10; j++) {
+                //Generamos de forma aleatoria 0 y 1
+                let numeroAleatorio = generarNumeroAleatorio(0, 2);
+                //Llenamos el tablero de esos valores
+                tablero[i][j] = numeroAleatorio;
+              }
             }
-            return campo;
-        }
+            return tablero;
+          }
+          //Así se ve el resultado con solo 0 y 1
+          let partidaBinaria = generarTablero();
+          console.table(partidaBinaria);
 
-        let minas = generarCampo();
-        console.table(minas);
-
-        function distancias(minas) {
-            let nueva = [];
-            for (let i = 0; i < minas.length; i++) {
-                nueva[i] = [];
-                for (let j = 0; j < minas[i].length; j++) {
-                    if (minas[i][j] == 1) {
-                        nueva[i][j] = 1;
-                    } else {
-                        nueva[i][j] = 0;
+          //Método el cual rellena el resto de huecos de la matriz
+          function rellenarHuecos(mapa) {
+            //Copia del tablero
+            let copia = JSON.parse(JSON.stringify(partidaBinaria));
+            //Recorremos el tablero
+            for (let i = 0; i < mapa.length; i++) {
+              for (let j = 0; j < mapa[i].length; j++) {
+                //Si encuentra un 0 hacemos los cambios
+                if (mapa[i][j] == 0) {
+                  let distancia = 0;
+                  let encontrado = false;
+                  //Mientras no se encuentre un 1 se continua buscando
+                  while (!encontrado) {
+                    let posicion = mapa[i][j];
+                    if (mapa[i][j - 1] == 1) {
+                      copia[i][j] = 2;
+                    } else if (mapa[i + 1][j] == 1) {
+                      copia[i][j] = 2;
+                    } else if (mapa[i][j + 1] == 1) {
+                      copia[i][j] = 2;
+                    } else if (mapa[i - 1][j] == 1) {
+                      copia[i][j] = 2;
                     }
+                  }
                 }
+              }
+              return mapa;
             }
-            for (let i = 0; i < minas.length; i++) {
-                for (let j = 0; j < minas[i].length; j++) {
-                    if (minas[i][j] == 0) {
-                        let dist = 1;
-                        let encontrado = false;
-                        while (!encontrado) {
-                            for (let k = i - dist; k <= i + dist; k++) {
-                                for (let l = j - dist; l <= j + dist; l++) {
-                                    if (k >= 0 && k < minas.length && l >= 0 && l < minas[i].length) {
-                                        if (minas[k][l] == 1) {
-                                            nueva[i][j] = dist + 1;
-                                            encontrado = true;
-                                        }
-                                    }
-                                }
-                            }
-                            dist++;
-                        }
-                    }
-                }
-            }
-            return nueva;
-        }
+          }
+          let partida = rellenarHuecos(partidaBinaria);
+          console.table(partida);
 
-        console.table(distancias(minas));
-
-        function color(campo) {
-            let html = "<table>";
-            for (let i = 0; i < campo.length; i++) {
-                html += "<tr>";
-                for (let j = 0; j < campo[i].length; j++) {
-                    html += "<td><button style='background-color: ";
-                    if (campo[i][j] == 5) {
-                        html += "white";
-                    } else if (campo[i][j] == 1) {
-                        html += "red";
-                    } else if (campo[i][j] == 2) {
-                        html += "yellow";
-                    } else if (campo[i][j] == 3) {
-                        html += "green";
-                    } else if (campo[i][j] == 4) {
-                        html += "blue";
-                    } else {
-                        html += "black";
-                    }
-                    html += "'>" + campo[i][j] + "</td>";
-                }
-                html += "</tr>";
-            }
-            html += "</table>";
-            document.body.innerHTML += html;
-        }
-        color(distancias(minas));
-    </script>
-</body>
-
+          /*
+          function color(campo) {
+              let html = "<table>";
+              for (let i = 0; i < campo.length; i++) {
+                  html += "<tr>";
+                  for (let j = 0; j < campo[i].length; j++) {
+                      html += "<td><button style='background-color: ";
+                      if (campo[i][j] == 5) {
+                          html += "white";
+                      } else if (campo[i][j] == 1) {
+                          html += "red";
+                      } else if (campo[i][j] == 2) {
+                          html += "yellow";
+                      } else if (campo[i][j] == 3) {
+                          html += "green";
+                      } else if (campo[i][j] == 4) {
+                          html += "blue";
+                      } else {
+                          html += "black";
+                      }
+                      html += "'>" + campo[i][j] + "</td>";
+                  }
+                  html += "</tr>";
+              }
+              html += "</table>";
+              document.body.innerHTML += html;
+          }
+          */
+        </script>
+      </body>
+    </html>
+  </head>
 </html>
