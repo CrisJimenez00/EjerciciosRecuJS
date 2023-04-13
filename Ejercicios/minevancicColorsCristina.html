@@ -49,7 +49,7 @@
               //Recorremos cada columna de cada fila y lo rellenamos de 0 y 1
               for (let j = 0; j < 10; j++) {
                 //Generamos de forma aleatoria 0 y 1
-                let numeroAleatorio = generarNumeroAleatorio(0, 5);
+                let numeroAleatorio = generarNumeroAleatorio(0, 4);
                 //Llenamos el tablero de esos valores
                 if (numeroAleatorio == 1) {
                   tablero[i][j] = numeroAleatorio;
@@ -60,151 +60,112 @@
             }
             return tablero;
           }
+
           //Así se ve el resultado con solo 0 y 1
           let partidaBinaria = generarTablero();
           console.table(partidaBinaria);
 
           //Método el cual rellena el resto de huecos de la matriz
-          function rellenarHuecos(mapa) {
-            //Copia del tablero
-            let copia = JSON.parse(JSON.stringify(partidaBinaria));
-                let distancia = 0;
-                let encontrado = true;
-                //Mientras no se encuentre un 1 se continua buscando
-                while (encontrado) {
-                  encontrado=false;
-                  //Recorremos el tablero
-                  for (let i = 0; i < mapa.length; i++) {
-              for (let j = 0; j < mapa[i].length; j++) {
-                  if (
-                    i - 1 >= 0 &&
-                    i + 1 <= mapa.length &&
-                    j - 1 >= 0 &&
-                    j + 1 <= mapa[i].length
-                  ) {
-                    let posicion = mapa[i][j];
-                    //Para el nivel 1
-                    if (mapa[i][j] == 1) {
-                      //Vamos a ir cambiando según las agujas del reloj empezando en orden de lectura
-                      //Diagonal arriba-izquierda
-                      copia[i - 1][j - 1] = 2;
-                      //Arriba
-                      copia[i][j - 1] = 2;
-                      //Diagonal arriba-derecha
-                      copia[i + 1][j - 1] = 2;
-                      //Derecha
-                      copia[i + 1][j] = 2;
-                      //Diagonal abajo-derecha
-                      copia[i + 1][j + 1] = 2;
-                      //Abajo
-                      copia[i][j + 1] = 2;
-                      //Diagonal abajo-izquierda
-                      copia[i - 1][j + 1] = 2;
-                      //Izquierda
-                      copia[i - 1][j] = 2;
-                    }
-                    //Para el nivel 2
-                    if (mapa[i][j] == 2) {
-                      //Diagonal arriba-izquierda
-                      copia[i - 1][j - 1] = 3;
-                      //Arriba
-                      copia[i][j - 1] = 3;
-                      //Diagonal arriba-derecha
-                      copia[i + 1][j - 1] = 3;
-                      //Derecha
-                      copia[i + 1][j] = 3;
-                      //Diagonal abajo-derecha
-                      copia[i + 1][j + 1] = 3;
-                      //Abajo
-                      copia[i][j + 1] = 3;
-                      //Diagonal abajo-izquierda
-                      copia[i - 1][j + 1] = 3;
-                      //Izquierda
-                      copia[i - 1][j] = 3;
-                    }
-                    //para el nivel 3
-                    if (mapa[i][j] == 3) {
-                      //Diagonal arriba-izquierda
-                      copia[i - 1][j - 1] = 4;
-                      //Arriba
-                      copia[i][j - 1] = 4;
-                      //Diagonal arriba-derecha
-                      copia[i + 1][j - 1] = 4;
-                      //Derecha
-                      copia[i + 1][j] = 4;
-                      //Diagonal abajo-derecha
-                      copia[i + 1][j + 1] = 4;
-                      //Abajo
-                      copia[i][j + 1] = 4;
-                      //Diagonal abajo-izquierda
-                      copia[i - 1][j + 1] = 4;
-                      //Izquierda
-                      copia[i - 1][j] = 4;
-                    }
-                    //Para el nivel 4
-                    if (mapa[i][j] == 4) {
-                      //Diagonal arriba-izquierda
-                      copia[i - 1][j - 1] = 5;
-                      //Arriba
-                      copia[i][j - 1] = 5;
-                      //Diagonal arriba-derecha
-                      copia[i + 1][j - 1] = 5;
-                      //Derecha
-                      copia[i + 1][j] = 5;
-                      //Diagonal abajo-derecha
-                      copia[i + 1][j + 1] = 5;
-                      //Abajo
-                      copia[i][j + 1] = 5;
-                      //Diagonal abajo-izquierda
-                      copia[i - 1][j + 1] = 5;
-                      //Izquierda
-                      copia[i - 1][j] = 5;
-                    }
-                  }}
+          function rellenarHuecos(mapa, valorCasilla, valorVariable) {
+            let encontrado = true;
+            //Ponemos un bucle para que se vean todos
+            while (encontrado) {
+              //Hacemos una copia
+              let copia = JSON.parse(JSON.stringify(mapa));
 
-
+              //Recorremos el mapa
+              for (let i = 0; i < mapa.length; i++) {
+                for (let j = 0; j < mapa[i].length; j++) {
+                  if (mapa[i][j] == valorCasilla) {
+                    //Diagonales(opcional)
+                    /*if (j > 0 && i > 0 && mapa[i - 1][j - 1] == 0) {
+                      mapa[i - 1][j - 1] = valorVariable;
+                    }
+                    if (
+                      i < mapa.length - 1 &&
+                      j > 0 &&
+                      mapa[i + 1][j - 1] == 0
+                    ) {
+                      mapa[i + 1][j - 1] = valorVariable;
+                    }
+                    if (
+                      i > 0 &&
+                      j < mapa[i].length - 1 &&
+                      mapa[i - 1][j + 1] == 0
+                    ) {
+                      mapa[i - 1][j + 1] = valorVariable;
+                    }
+                    if (
+                      i < mapa.length - 1 &&
+                      j < mapa[i].length - 1 &&
+                      mapa[i + 1][j + 1] == 0
+                    ) {
+                      mapa[i + 1][j + 1] = valorVariable;
+                    }*/
+                    //Principales
+                    if (j > 0 && mapa[i][j - 1] == 0) {
+                      mapa[i][j - 1] = valorVariable;
+                    }
+                    if (i < mapa.length - 1 && mapa[i + 1][j] == 0) {
+                      mapa[i + 1][j] = valorVariable;
+                    }
+                    if (j < mapa[i].length - 1 && mapa[i][j + 1] == 0) {
+                      mapa[i][j + 1] = valorVariable;
+                    }
+                    if (i > 0 && mapa[i - 1][j] == 0) {
+                      mapa[i - 1][j] = valorVariable;
+                    }
                   }
-                  if (JSON.stringify(mapa) !== JSON.stringify(copia)) {
-                      encontrado = true;
-                    }
-                    JSON.stringify(mapa) = JSON.stringify(copia);
                 }
-                return mapa;
               }
+              //Aumentan los valores de la que buscamos y el valor que queremos alrededor
+              valorCasilla++;
+              valorVariable++;
 
+              //Si no hay modificaciones cambiamos el valor y salimos del while
+              if (JSON.stringify(mapa) === JSON.stringify(copia)) {
+                encontrado = false;
+              }
+            }
 
+            return mapa;
+          }
 
-          let partida = rellenarHuecos(partidaBinaria);
+          //Ejecutamos la funcion y la mostramos por consola
+          let partida = rellenarHuecos(partidaBinaria, 1, 2);
           console.table(partida);
 
-          /*
+
+          //Funcion la cual muestra el resultado en el body de la página
           function color(campo) {
-              let html = "<table>";
+              let body = "<table>";
               for (let i = 0; i < campo.length; i++) {
-                  html += "<tr>";
+                  body += "<tr>";
                   for (let j = 0; j < campo[i].length; j++) {
-                      html += "<td><button style='background-color: ";
+                      body += "<td><button class=' ";
                       if (campo[i][j] == 5) {
-                          html += "white";
+                          body += "btn btn-success";
                       } else if (campo[i][j] == 1) {
-                          html += "red";
+                          body += "btn btn-danger";
                       } else if (campo[i][j] == 2) {
-                          html += "yellow";
+                          body += "btn btn-warning";
                       } else if (campo[i][j] == 3) {
-                          html += "green";
+                          body += "btn btn-primary";
                       } else if (campo[i][j] == 4) {
-                          html += "blue";
+                          body += "btn btn-info";
                       } else {
-                          html += "black";
+                          body += "btn btn-default";
                       }
-                      html += "'>" + campo[i][j] + "</td>";
+                      body += "'>" + campo[i][j] + "</td>";
                   }
-                  html += "</tr>";
+                  body += "</tr>";
               }
-              html += "</table>";
-              document.body.innerHTML += html;
+              body += "</table>";
+              document.body.innerHTML += body;
           }
-          */
+          
+          //Llamamos a la funcion
+          color(partida);
         </script>
       </body>
     </html>
