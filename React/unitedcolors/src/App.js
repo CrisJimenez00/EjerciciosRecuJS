@@ -1,180 +1,190 @@
 import { Button } from "reactstrap";
-import { Component } from "react";
+import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Component } from "react";
 
-const MapaBotones = (props) => {
-  let lista = [];
-  for (let i = 0; i < props.listaBotones.length; i++) {
-    let lista2 = [];
-    for (let j = 0; j < props.listaBotones.length; j++) {
-      lista2.push(
-        <Button
-          key={i * 10 + j}
-          color={props.listaBotones[i][j].color}
-          onClick={() => props.clica(i, j)}
-        />
-      );
+class Boton extends Component {
+    render() {
+        return (
+            <Button
+                onClick={this.props.onClick}
+                color={this.props.color}
+            >
+            </Button>
+        );
     }
-    lista.push(
-      <>
-        {lista2}
-        <br />
-      </>
-    );
-  }
-  return <>{lista}</>;
-};
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      listaBotones: Array(9).fill(null),
-      listaColores: ["primary", "secondary", "success", "warning", "danger"],
-      ultimosColores: [],
-    };
-    this.carga();
-  }
-  carga() {
-    let l = this.state.listaBotones;
-    for (let i = 0; i < l.length; i++) {
-      let aux = [];
-      for (let j = 0; j < l.length; j++) {
-        aux.push({ color: "info", pulsado: false });
-      }
-      l[i] = aux;
-    }
-    this.setState({ listaBotones: l });
+}
+function floodFill(matriz, posx, posy, colorInicial, colorNuevo) {
+  if (matriz[posy][posx] !== colorInicial) {
+    return matriz; // el punto no cumple la condición, no hace falta cambiarlo
   }
 
-  cambiaColor(x, y) {
-    const l = this.state.listaBotones;
-    const button = l[x][y];
-  
-    let color = button.color;
-  
-    // Comprueba si el color ya ha sido seleccionado y el botón actual no es adyacente a un botón ya seleccionado
-    const selectedColors = new Set(l.flatMap(row => row.filter(b => b.pulsado).map(b => b.color)));
-    if (selectedColors.has(color) && !l.some((row, i) => (
-      (i === x - 1 && row[y].pulsado) ||
-      (i === x + 1 && row[y].pulsado) ||
-      (row[y - 1]?.pulsado) ||
-      (row[y + 1]?.pulsado)
-    ))) {
-      const colorIndex = this.state.listaColores.indexOf(color);
-      if (colorIndex !== -1) {
-        color = this.state.listaColores[(colorIndex + 1) % this.state.listaColores.length];
-      }
-    }
-  
-    let hayAdyacentePulsado = false;
-    if (x > 0 && l[x - 1][y].pulsado) {
-      hayAdyacentePulsado = true;
-      color = l[x - 1][y].color;
-    }
-    if (x < l.length - 1 && l[x + 1][y].pulsado) {
-      hayAdyacentePulsado = true;
-      color = l[x + 1][y].color;
-    }
-    if (y > 0 && l[x][y - 1].pulsado) {
-      hayAdyacentePulsado = true;
-      color = l[x][y - 1].color;
-    }
-    if (y < l.length - 1 && l[x][y + 1].pulsado) {
-      hayAdyacentePulsado = true;
-      color = l[x][y + 1].color;
-    }
-    if (hayAdyacentePulsado) {
-      l[x][y].color = color;
-    }
-    this.setState({ listaBotones: l });
+  const nuevaMatriz = matriz.map((fila) => [...fila]); // hacemos una copia de la matriz para no modificarla directamente
+
+  nuevaMatriz[posy][posx] = colorNuevo; // cambiamos el color del punto inicial
+
+  // exploramos los vecinos recursivamente
+  if (posy > 0) {
+    nuevaMatriz = floodFill(nuevaMatriz, posx, posy - 1, colorInicial, colorNuevo); // vecino arriba
   }
-  clica(x, y) {
-    let l = this.state.listaBotones;
-    let button = l[x][y];
-  
-    if (button.pulsado) {
-      // Si el botón ya está pulsado, verificar cuántas veces ha sido pulsado antes
-      let index = this.state.listaColores.indexOf(button.color);
-      if (index === -1) {
-        // Si es -1, entonces el botón ya estaba en el color predefinido
-        button.color = this.state.ultimosColores[this.state.ultimosColores.length - 1] || "info";
-        // Si no hay ningún color en la lista de últimos colores, establece el color predefinido
-      } else if (button.vecesPulsado === 1) {
-        // Si es 1, establece el color predefinido
-        button.color = "info";
-      } else {
-        // Si es mayor que 1, establece el siguiente color en la lista
-        button.color = this.state.listaColores[(index + 1) % this.state.listaColores.length];
-      }
-      // Reinicia el contador de veces pulsado del botón
-      button.vecesPulsado = 0;
-    } else {
-      // Si el botón no está pulsado, establece el primer color en la lista
-      button.color = this.state.listaColores[0];
+  if (posy < nuevaMatriz.length - 1) {
+    nuevaMatriz = floodFill(nuevaMatriz, posx, posy + 1, colorInicial, colorNuevo); // vecino abajo
+  }
+  if (posx > 0) {
+    nuevaMatriz = floodFill(nuevaMatriz, posx - 1, posy, colorInicial, colorNuevo); // vecino izquierdo
+  }
+  if (posx < nuevaMatriz[0].length - 1) {
+    nuevaMatriz = floodFill(nuevaMatriz, posx + 1, posy, colorInicial, colorNuevo); // vecino derecho
+  }
+
+  return nuevaMatriz;
+}
+class Botones extends Component {
+    constructor(props) {
+        super(props);
+
+        const cols = props.cols;
+        const rows = props.rows;
+        const posiblesColores = [
+          "secondary","success","warning","danger"
+        ];
+        const colorDefault = "primary";
+        
+
+        const matriz = Array(rows)
+            .fill()
+            .map(() => Array(cols).fill(colorDefault));
+
+        this.state = {
+            matriz: matriz,
+            cols: cols,
+            rows: rows,
+            colorDefault: colorDefault,
+            posiblesColores: posiblesColores,
+        };
+
+        this.cambioColor = this.cambioColor.bind(this);
+        this.handleClick = this.handleClick.bind(this);
     }
+
+    cambioColor(matriz, i, j, color) {
+        const {rows, cols, colorDefault} = this.state;
+
+        if (i > 0) {
+            if (matriz[i - 1][j] !== color && matriz[i - 1][j] !== colorDefault) {
+                matriz[i - 1][j] = color;
+                matriz = this.cambioColor(matriz, i - 1, j, color);
+            }
+        }
+
+        if (i < rows - 1) {
+            if (matriz[i + 1][j] !== color && matriz[i + 1][j] !== colorDefault) {
+                matriz[i + 1][j] = color;
+                matriz = this.cambioColor(matriz, i + 1, j, color);
+            }
+        }
+
+        if (j > 0) {
+            if (matriz[i][j - 1] !== color && matriz[i][j - 1] !== colorDefault) {
+                matriz[i][j - 1] = color;
+                matriz = this.cambioColor(matriz, i, j - 1, color);
+            }
+        }
+
+        if (j < cols - 1) {
+            if (matriz[i][j + 1] !== color && matriz[i][j + 1] !== colorDefault) {
+                matriz[i][j + 1] = color;
+                matriz = this.cambioColor(matriz, i, j + 1, color);
+            }
+        }
+
+        return matriz;
+    }
+
+  
+  handleClick(posx, posy) {
+    const { matriz, cols, rows, colorDefault, posiblesColores } = this.state;
+    let ultimoBotonPresionado = 0; // se define la variable
+  
+    const nuevaMatriz = matriz.map((fila, i) => {
+      return fila.map((color, j) => {
+        if (i === posy && j === posx) {
+          if (color !== "primary") {
+            return colorDefault;
+          }
+          if (i > 0 && matriz[i - 1][j] !== colorDefault) {
+            ultimoBotonPresionado = matriz[i - 1][j];
+            return matriz[i - 1][j];
+          }
+          if (i < rows - 1 && matriz[i + 1][j] !== colorDefault) {
+            ultimoBotonPresionado = matriz[i + 1][j];
+            return matriz[i + 1][j];
+          }
+          if (j > 0 && matriz[i][j - 1] !== colorDefault) {
+            ultimoBotonPresionado = matriz[i][j - 1];
+            return matriz[i][j - 1];
+          }
+          if (j < cols - 1 && matriz[i][j + 1] !== colorDefault) {
+            ultimoBotonPresionado = matriz[i][j + 1];
+            return matriz[i][j + 1];
+          }
+          let posiblesColoresSinUltimo = posiblesColores.filter((color) => color !== ultimoBotonPresionado);
+          if (posiblesColoresSinUltimo.length === 0) {
+            posiblesColoresSinUltimo = posiblesColores;
+          }
+          const indice = Math.floor(Math.random() * posiblesColoresSinUltimo.length);
+          ultimoBotonPresionado = posiblesColoresSinUltimo[indice];
+          return posiblesColoresSinUltimo[indice];
+        } else {
+          return color;
+        }
+      });
+    });
     
-    button.pulsado = !button.pulsado;
-    button.vecesPulsado = (button.vecesPulsado || 0) + 1;
-    this.setState(prevState => ({ ultimosColores: [...prevState.ultimosColores, button.color] }));
-    this.setState({ listaBotones: l });
-    this.cambiaColor(x, y);
-  }
-  cambiaColor(x, y) {
-  const l = this.state.listaBotones;
-  const button = l[x][y];
-
-  let color = button.color;
-
-  // Comprueba si el color ya ha sido seleccionado y el botón actual no es adyacente a un botón ya seleccionado
-  const selectedColors = new Set(l.flatMap(row => row.filter(b => b.pulsado).map(b => b.color)));
-  if (selectedColors.has(color) && !l.some((row, i) => (
-    (i === x - 1 && row[y].pulsado) ||
-    (i === x + 1 && row[y].pulsado) ||
-    (row[y - 1]?.pulsado) ||
-    (row[y + 1]?.pulsado)
-  ))) {
-    const colorIndex = this.state.listaColores.indexOf(color);
-    if (colorIndex !== -1) {
-      color = this.state.listaColores[(colorIndex + 1) % this.state.listaColores.length];
-    }
-  }
-
-  let hayAdyacentePulsado = false;
-  if (x > 0 && l[x - 1][y].pulsado) {
-    hayAdyacentePulsado = true;
-    color = l[x - 1][y].color;
-  }
-  if (x < l.length - 1 && l[x + 1][y].pulsado) {
-    hayAdyacentePulsado = true;
-    color = l[x + 1][y].color;
-  }
-  if (y > 0 && l[x][y - 1].pulsado) {
-    hayAdyacentePulsado = true;
-    color = l[x][y - 1].color;
-  }
-  if (y < l.length - 1 && l[x][y + 1].pulsado) {
-    hayAdyacentePulsado = true;
-    color = l[x][y + 1].color;
-  }
-  if (hayAdyacentePulsado) {
-    l[x][y].color = color;
-  }
-  this.setState({ listaBotones: l });
-}
-
-  
-
+    this.setState({ matriz: nuevaMatriz, ultimoBotonPresionado });}
+/*HAY QUE HACER QUE SI SE UNEN DOS GRUPOS SE UNIFIQUEN EN UN MISMO COLOR */
+   
   render() {
-    return (
-      <>
-        <MapaBotones
-          listaBotones={this.state.listaBotones}
-          clica={(x, y) => this.clica(x, y)}
-        />
-      </>
-    );
+      const {matriz, posiblesColores} = this.state;
+
+      const filas = matriz.map((fila, i) => {
+          const botones = fila.map((color, j) => {
+              return (
+                  <Boton
+                      key={j}
+                      color={color}
+                      onClick={() => this.handleClick(j, i)}
+                  />
+              );
+          });
+
+          return <div key={i}>{botones}</div>;
+      });
+
+      const botonesColores = posiblesColores.map((color, i) => {
+          return (
+              <Boton
+                  key={i}
+                  color={color}
+                  onClick={() => this.setState({colorDefault: color})}
+              />
+          );
+      });
+
+      return (
+          <div>
+              <div>{filas}</div>
+              <div>{botonesColores}</div>
+          </div>
+      );
   }
 }
-
+function App() {
+  return (
+    <div>
+      <h1>Matriz de colores</h1>
+      <Botones cols={10} rows={10} />
+    </div>
+  );
+}
 export default App;
-  
