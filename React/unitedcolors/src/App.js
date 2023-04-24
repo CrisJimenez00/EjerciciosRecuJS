@@ -14,31 +14,7 @@ class Boton extends Component {
         );
     }
 }
-function floodFill(matriz, posx, posy, colorInicial, colorNuevo) {
-  if (matriz[posy][posx] !== colorInicial) {
-    return matriz; // el punto no cumple la condición, no hace falta cambiarlo
-  }
 
-  const nuevaMatriz = matriz.map((fila) => [...fila]); // hacemos una copia de la matriz para no modificarla directamente
-
-  nuevaMatriz[posy][posx] = colorNuevo; // cambiamos el color del punto inicial
-
-  // exploramos los vecinos recursivamente
-  if (posy > 0) {
-    nuevaMatriz = floodFill(nuevaMatriz, posx, posy - 1, colorInicial, colorNuevo); // vecino arriba
-  }
-  if (posy < nuevaMatriz.length - 1) {
-    nuevaMatriz = floodFill(nuevaMatriz, posx, posy + 1, colorInicial, colorNuevo); // vecino abajo
-  }
-  if (posx > 0) {
-    nuevaMatriz = floodFill(nuevaMatriz, posx - 1, posy, colorInicial, colorNuevo); // vecino izquierdo
-  }
-  if (posx < nuevaMatriz[0].length - 1) {
-    nuevaMatriz = floodFill(nuevaMatriz, posx + 1, posy, colorInicial, colorNuevo); // vecino derecho
-  }
-
-  return nuevaMatriz;
-}
 class Botones extends Component {
     constructor(props) {
         super(props);
@@ -188,3 +164,4 @@ function App() {
   );
 }
 export default App;
+
