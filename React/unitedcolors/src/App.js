@@ -22,7 +22,7 @@ class Botones extends Component {
         const cols = props.cols;
         const rows = props.rows;
         const posiblesColores = [
-          "secondary","success","warning","danger"
+          "secondary","success","info","danger"
         ];
         const colorDefault = "primary";
         
@@ -119,8 +119,8 @@ class Botones extends Component {
     
     this.setState({ matriz: nuevaMatriz, ultimoBotonPresionado });}
 /*HAY QUE HACER QUE SI SE UNEN DOS GRUPOS SE UNIFIQUEN EN UN MISMO COLOR */
-   
-  render() {
+
+render() {
       const {matriz, posiblesColores} = this.state;
 
       const filas = matriz.map((fila, i) => {
