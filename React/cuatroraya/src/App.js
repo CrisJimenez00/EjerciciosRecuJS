@@ -1,4 +1,5 @@
-/*import React, { Component } from "react";
+/*  otra forma de hacer el 4 en raya
+import React, { Component } from "react";
 import { Button } from "reactstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -188,6 +189,8 @@ class Juego extends Component {
 }
 
 export default Juego;*/
+
+/*De la forma que lo quiere el profesor */
 import React, { Component } from "react";
 import { Button } from "reactstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -198,11 +201,12 @@ const MapaBotones = (props) => {
     <div>
       {listaBotones.map((fila, x) => {
         return (
-          <div >
+          <div key={x}>
             {fila.map((boton, y) => {
               if (boton !== "secondary") {
                 return (
                   <Button
+                  key={y}
                     onClick={() => props.onClick(x, y)}
                     color={boton}
                   ></Button>
@@ -338,8 +342,8 @@ class App extends Component {
       <div className="App">
         <h1> CUATRO EN RAYA </h1>
         <h2> Turno: {this.state.turno ? "Rojo" : "Azul"} </h2>
-        <h2> {this.state.ganaAzul ? "Ha ganado el jugador Azul" : ""} </h2>
-        <h2> {this.state.ganaRojo ? "Ha ganado el jugador Rojo" : ""} </h2>
+        <h2> {this.state.ganaAzul ? "Ganan los azules" : ""} </h2>
+        <h2> {this.state.ganaRojo ? "Ganan los rojos" : ""} </h2>
         <MapaBotones
           listaBotones={this.state.listaBotones}
           onClick={(x, y) => this.partida(x, y)}
