@@ -7,14 +7,14 @@ export default function Uno(props) {
 
 
     const handleChange = (event) => {
-        if (event.target.name == "texto") {
+        if (event.target.name === "texto") {
             setTexto(event.target.value)
         }
     }
 
     const handleSubmit = () => {
 
-        if (texto != "") {
+        if (texto !== "") {
             props.setTitulo(texto)
         }
     }
