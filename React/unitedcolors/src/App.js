@@ -2,7 +2,7 @@ import { Button } from "reactstrap";
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Component } from "react";
-
+//Tenemos que crear el boton por un lado y la matriz rellena de estos por otro
 class Boton extends Component {
     render() {
         return (
@@ -19,109 +19,105 @@ class Botones extends Component {
     constructor(props) {
         super(props);
 
-        const cols = props.cols;
-        const rows = props.rows;
-        const posiblesColores = [
+        //Propiedades
+        const columna = props.columna;
+        const filas = props.filas;
+        const colores = [
           "secondary","success","info","danger"
         ];
-        const colorDefault = "primary";
+        const colorStandar = "primary";
         
-
-        const matriz = Array(rows)
+        //Creamos la matriz y la rellenamos del color predeterminado
+            const matriz = Array(filas)
             .fill()
-            .map(() => Array(cols).fill(colorDefault));
+            .map(() => Array(columna).fill(colorStandar));
 
         this.state = {
             matriz: matriz,
-            cols: cols,
-            rows: rows,
-            colorDefault: colorDefault,
-            posiblesColores: posiblesColores,
+            columna: columna,
+            filas: filas,
+            colorStandar: colorStandar,
+            colores: colores,
         };
 
-        this.cambioColor = this.cambioColor.bind(this);
-        this.handleClick = this.handleClick.bind(this);
     }
 
+    //Método el cual mira las de alrededor y unifica el color
     cambioColor(matriz, i, j, color) {
-        const {rows, cols, colorDefault} = this.state;
-
+        const {filas, columna, colorStandar} = this.state;
         if (i > 0) {
-            if (matriz[i - 1][j] !== color && matriz[i - 1][j] !== colorDefault) {
+            if (matriz[i - 1][j] !== color && matriz[i - 1][j] !== colorStandar) {
                 matriz[i - 1][j] = color;
                 matriz = this.cambioColor(matriz, i - 1, j, color);
             }
         }
 
-        if (i < rows - 1) {
-            if (matriz[i + 1][j] !== color && matriz[i + 1][j] !== colorDefault) {
+        if (i < filas - 1) {
+            if (matriz[i + 1][j] !== color && matriz[i + 1][j] !== colorStandar) {
                 matriz[i + 1][j] = color;
                 matriz = this.cambioColor(matriz, i + 1, j, color);
             }
         }
 
         if (j > 0) {
-            if (matriz[i][j - 1] !== color && matriz[i][j - 1] !== colorDefault) {
+            if (matriz[i][j - 1] !== color && matriz[i][j - 1] !== colorStandar) {
                 matriz[i][j - 1] = color;
                 matriz = this.cambioColor(matriz, i, j - 1, color);
             }
         }
 
-        if (j < cols - 1) {
-            if (matriz[i][j + 1] !== color && matriz[i][j + 1] !== colorDefault) {
+        if (j < columna - 1) {
+            if (matriz[i][j + 1] !== color && matriz[i][j + 1] !== colorStandar) {
                 matriz[i][j + 1] = color;
                 matriz = this.cambioColor(matriz, i, j + 1, color);
             }
         }
-
         return matriz;
     }
 
-  
-  handleClick(posx, posy) {
-    const { matriz, cols, rows, colorDefault, posiblesColores } = this.state;
-    let ultimoBotonPresionado = 0; // se define la variable
-  
-    const nuevaMatriz = matriz.map((fila, i) => {
+  //Método el cual nos indica qué hace el código cuando hacemos click sobre algo(En este caso los botones)
+  handleClick(posicionY, posicionX) {
+    const { matriz, columna, filas, colorStandar, colores } = this.state;
+    const matrizFinal = matriz.map((fila, i) => {
       return fila.map((color, j) => {
-        if (i === posy && j === posx) {
+        if (i === posicionX && j === posicionY) {
           if (color !== "primary") {
-            return colorDefault;
+            return colorStandar;
           }
-          if (i > 0 && matriz[i - 1][j] !== colorDefault) {
-            ultimoBotonPresionado = matriz[i - 1][j];
+          if (i > 0 && matriz[i - 1][j] !== colorStandar) {
             return matriz[i - 1][j];
           }
-          if (i < rows - 1 && matriz[i + 1][j] !== colorDefault) {
-            ultimoBotonPresionado = matriz[i + 1][j];
+          if (i < filas - 1 && matriz[i + 1][j] !== colorStandar) {
             return matriz[i + 1][j];
           }
-          if (j > 0 && matriz[i][j - 1] !== colorDefault) {
-            ultimoBotonPresionado = matriz[i][j - 1];
+          if (j > 0 && matriz[i][j - 1] !== colorStandar) {
             return matriz[i][j - 1];
           }
-          if (j < cols - 1 && matriz[i][j + 1] !== colorDefault) {
-            ultimoBotonPresionado = matriz[i][j + 1];
+          if (j < columna - 1 && matriz[i][j + 1] !== colorStandar) {
             return matriz[i][j + 1];
           }
-          let posiblesColoresSinUltimo = posiblesColores.filter((color) => color !== ultimoBotonPresionado);
-          if (posiblesColoresSinUltimo.length === 0) {
-            posiblesColoresSinUltimo = posiblesColores;
-          }
-          const indice = Math.floor(Math.random() * posiblesColoresSinUltimo.length);
-          ultimoBotonPresionado = posiblesColoresSinUltimo[indice];
-          return posiblesColoresSinUltimo[indice];
+          let colorAleatorio=colores[
+            Math.floor(Math.random() * colores.length)
+            ];
+          return colorAleatorio;
         } else {
           return color;
         }
       });
     });
+    //Para que cuando le damos de nuevo a un botón únicamente ese botón de ponga del color standar
+    if(matrizFinal[posicionX][posicionY]===colorStandar){
+      this.setState({ matriz: matrizFinal });
+      return;
+    }
+    //Llamamos al método para que nos cambie el color
+    this.cambioColor(matrizFinal, posicionX , posicionY, matrizFinal[posicionX][posicionY]);
     
-    this.setState({ matriz: nuevaMatriz, ultimoBotonPresionado });}
-/*HAY QUE HACER QUE SI SE UNEN DOS GRUPOS SE UNIFIQUEN EN UN MISMO COLOR */
+    //Cambiamos la matriz por la nueva con los colores cambiados
+    this.setState({ matriz: matrizFinal });}
 
 render() {
-      const {matriz, posiblesColores} = this.state;
+      const {matriz, colores} = this.state;
 
       const filas = matriz.map((fila, i) => {
           const botones = fila.map((color, j) => {
@@ -137,12 +133,12 @@ render() {
           return <div key={i}>{botones}</div>;
       });
 
-      const botonesColores = posiblesColores.map((color, i) => {
+      const botonesColores = colores.map((color, i) => {
           return (
               <Boton
                   key={i}
                   color={color}
-                  onClick={() => this.setState({colorDefault: color})}
+                  onClick={() => this.setState({colorStandar: color})}
               />
           );
       });
@@ -150,7 +146,7 @@ render() {
       return (
           <div>
               <div>{filas}</div>
-              <div>{botonesColores}</div>
+              <div>Leyenda : {botonesColores}</div>
           </div>
       );
   }
@@ -159,7 +155,7 @@ function App() {
   return (
     <div>
       <h1>Matriz de colores</h1>
-      <Botones cols={10} rows={10} />
+      <Botones columna={10} filas={10} />
     </div>
   );
 }
