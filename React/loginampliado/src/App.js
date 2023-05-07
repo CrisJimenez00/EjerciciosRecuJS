@@ -30,7 +30,7 @@ class App extends Component {
       telefono:telefono,
       password:md5(password)
     })).then( res=>{
-        if(res.data.usuario== "Acceso correcto"){
+        if(res.data.mensaje == "Acceso correcto"){
           this.setState({logged:true})
         }
         this.setState({info:res.data.mensaje})
