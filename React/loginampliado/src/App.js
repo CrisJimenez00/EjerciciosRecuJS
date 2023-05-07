@@ -32,9 +32,9 @@ class App extends Component {
     })).then( res=>{
         if(res.data.mensaje == "Acceso correcto"){
           this.setState({logged:true})
+        }else{
+          this.setState({info:"Ups, hubo un error"})
         }
-        this.setState({info:res.data.mensaje})
-        
       }
     );
   }
