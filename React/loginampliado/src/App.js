@@ -8,15 +8,16 @@ import Dos from "./componentes/Dos";
 import Tres from "./componentes/Tres";
 import { PHPLOGIN } from "./componentes/Datos";
 import axios from "axios";
-import md5 from "md5"
+import md5 from "md5";
 
 class App extends Component {
+  //Atributos
   constructor(props) {
     super(props);
     this.state = {
       menuItem: undefined,
       logged: false,
-      info:"",
+      info: "",
       titulo: "",
     };
   }
@@ -25,28 +26,38 @@ class App extends Component {
     this.setState({ menuItem: item });
   }
 
-  userLogin(telefono,password){
-    axios.post(PHPLOGIN,JSON.stringify({
-      telefono:telefono,
-      password:md5(password)
-    })).then( res=>{
-        if(res.data.mensaje == "Acceso correcto"){
-          this.setState({logged:true})
-        }else{
-          this.setState({info:"Ups, hubo un error"})
+  //El logueo
+  userLogin(telefono, password) {
+    axios
+      .post(
+        PHPLOGIN,
+        JSON.stringify({
+          telefono: telefono,
+          password: md5(password),//md5 para la contraseña
+        })
+      )
+      .then((res) => {
+        //En caso de que el mensaje sea positivo entra
+        if (res.data.mensaje == "Acceso correcto") {
+          //Cambia el logueado a true
+          this.setState({ logged: true });
+        } else {
+          //En caso negativo indica que hay un error
+          this.setState({ info: "Ups, hubo un error" });
         }
-      }
-    );
+      });
   }
-  setInfo(i){
-    this.setState({info:i})
+  setInfo(i) {
+    this.setState({ info: i });
   }
-  setTitulo(t){
-    this.setState({titulo:t})
+  setTitulo(t) {
+    this.setState({ titulo: t });
   }
 
+  //renderizamos
   render() {
     let obj = [];
+    //Si no está logueado aparece el login
     if (!this.state.logged) {
       obj.push(
         <AppLogin
@@ -55,6 +66,7 @@ class App extends Component {
           info={this.state.info}
         />
       );
+      //Si está logueado aparecen ya los menus de 1,2,3
     } else {
       obj.push(
         <Menu
@@ -75,4 +87,3 @@ class App extends Component {
 }
 
 export default App;
-

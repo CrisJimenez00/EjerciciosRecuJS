@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { Button, Form, Input, FormGroup, Label, Row, Col } from "reactstrap";
 export default function Uno(props) {
-  //hooks
+  //Usamos hookspara cambiar y usar estados
   const [texto, setTexto] = useState("");
   const handleChange = (event) => {
     if (event.target.name === "texto") {
-      setTexto(event.target.value); //actualiza el valor en el hook
+      setTexto(event.target.value);
     }
   };
   const handleSubmit = () => {
     if (texto !== "") {
-      props.setTitulo(texto); //actualiza el estado
+      props.setTitulo(texto);
     }
   };
   return (
