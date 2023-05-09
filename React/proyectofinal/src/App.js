@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Menu from "./componentes/Menu";
 import AppLogin from "./componentes/AppLogin";
 import Titulo from "./componentes/Titulo";
-import Uno from "./componentes/Uno";
+import Barraquita from "./componentes/Barraquita";
 import Dos from "./componentes/Dos";
 import Tres from "./componentes/Tres";
 import { PHPLOGIN } from "./componentes/Datos";
@@ -19,6 +19,8 @@ class App extends Component {
       logged: false,
       info: "",
       titulo: "",
+      nombreUsuario:"",
+      rolUsuario:0,
     };
   }
 
@@ -27,13 +29,13 @@ class App extends Component {
   }
 
   //El logueo
-  userLogin(telefono, password) {
+  userLogin(usuario, clave) {
     axios
       .post(
         PHPLOGIN,
         JSON.stringify({
-          telefono: telefono,
-          password: md5(password),//md5 para la contraseña
+          usuario: usuario,
+          clave: md5(clave),//md5 para la contraseña
         })
       )
       .then((res) => {
@@ -41,12 +43,17 @@ class App extends Component {
         if (res.data.mensaje == "Acceso correcto") {
           //Cambia el logueado a true
           this.setState({ logged: true });
+          this.setState({nombreUsuario:res.data.nombre});
+          this.setState({rolUsuario:res.data.admin});
         } else {
           //En caso negativo indica que hay un error
           this.setState({ info: "Ups, hubo un error" });
+          this.setState({nombreUsuario:res.data.nombre});
+          this.setState({rolUsuario:res.data.admin});
         }
       });
   }
+  
   setInfo(i) {
     this.setState({ info: i });
   }
@@ -58,12 +65,15 @@ class App extends Component {
   render() {
     let obj = [];
     //Si no está logueado aparece el login
+
     if (!this.state.logged) {
       obj.push(
         <AppLogin
           setInfo={(i) => this.setInfo(i)}
-          userLogin={(telefono, password) => this.userLogin(telefono, password)}
+          userLogin={(usuario, clave) => this.userLogin(usuario, clave)}
           info={this.state.info}
+          nombreUsuario={this.state.nombreUsuario}
+          rolUsuario={this.state.rolUsuario}
         />
       );
       //Si está logueado aparecen ya los menus de 1,2,3
@@ -74,13 +84,12 @@ class App extends Component {
           changeMenu={(item) => this.changeMenu(item)}
         />
       );
+      //Tengo dos opciones aquí, o filtrar por nombre de usuario o por rol
       obj.push(<Titulo titulo={this.state.titulo} />);
-      if (this.state.menuItem === "UNO")
-        obj.push(<Uno setTitulo={(t) => this.setTitulo(t)} />);
-      if (this.state.menuItem === "DOS")
+      if (this.state.rolUsuario === 0)
+        obj.push(<Barraquita setTitulo={(t) => this.setTitulo(t)} />);
+        if (this.state.rolUsuario === 1)
         obj.push(<Dos setTitulo={(t) => this.setTitulo(t)} />);
-      if (this.state.menuItem === "TRES")
-        obj.push(<Tres setTitulo={(t) => this.setTitulo(t)} />);
     }
     return <div className="App">{obj}</div>;
   }
