@@ -1,12 +1,12 @@
 import { Component } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Menu from "./componentes/Menu";
+import MenuAdmin from "./componentes/MenuAdmin";
+import MenuUsuario from "./componentes/MenuUsuario";
 import AppLogin from "./componentes/AppLogin";
-import Titulo from "./componentes/Titulo";
-import Barraquita from "./componentes/Barraquita";
-import Dos from "./componentes/Dos";
-import Tres from "./componentes/Tres";
-import { PHPLOGIN } from "./componentes/Datos";
+import Pantallas from "./componentes/Pantallas";
+import Anuncios from "./componentes/Anuncios";
+import { PHPLOGIN,PHPINSERT } from "./componentes/Datos";
+
 import axios from "axios";
 import md5 from "md5";
 
@@ -19,8 +19,9 @@ class App extends Component {
       logged: false,
       info: "",
       titulo: "",
-      nombreUsuario:"",
-      rolUsuario:0,
+      nombreUsuario: "",
+      rolUsuario: 0,
+      idUsuario:'',
     };
   }
 
@@ -35,25 +36,67 @@ class App extends Component {
         PHPLOGIN,
         JSON.stringify({
           usuario: usuario,
-          clave: md5(clave),//md5 para la contraseña
+          clave: md5(clave), //md5 para la contraseña
         })
       )
       .then((res) => {
         //En caso de que el mensaje sea positivo entra
+        console.log(res);
         if (res.data.mensaje == "Acceso correcto") {
           //Cambia el logueado a true
           this.setState({ logged: true });
-          this.setState({nombreUsuario:res.data.nombre});
-          this.setState({rolUsuario:res.data.admin});
+          this.setState({ nombreUsuario: res.data.nombre });
+          this.setState({ rolUsuario: res.data.admin });
         } else {
           //En caso negativo indica que hay un error
           this.setState({ info: "Ups, hubo un error" });
-          this.setState({nombreUsuario:res.data.nombre});
-          this.setState({rolUsuario:res.data.admin});
         }
       });
   }
-  
+  /*userListar(){
+    axios
+      .post(
+        PHPLOGIN,
+        JSON.stringify({
+          usuario: usuario,
+          clave: md5(clave), //md5 para la contraseña
+        })
+      )
+      .then((res) => {
+        //En caso de que el mensaje sea positivo entra
+        console.log(res);
+        if (res.data.mensaje == "Acceso correcto") {
+          this.setState({idUsuario:res.data.id});
+          this.setState({ nombreUsuario: res.data.nombre });
+          this.setState({ usuario: res.data.usuario });
+        } else {
+          //En caso negativo indica que hay un error
+          this.setState({ info: "Ups, hubo un error" });
+        }
+      });
+  }*/
+  userInsert(nombre, usuario, clave){
+    axios
+      .post(
+        PHPINSERT,
+        JSON.stringify({
+          usuario: usuario,
+          clave: md5(clave), //md5 para la contraseña
+        })
+      )
+      .then((res) => {
+        //En caso de que el mensaje sea positivo entra
+        console.log(res);
+        if (res.data.mensaje == "Insertado correctamente") {
+          //Cambia el logueado a true
+          this.setState({ info:"El usuario se ha insertado correctamente"});
+        } else {
+          //En caso negativo indica que hay un error
+          this.setState({ info: "Ups, hubo un error" });
+        }
+      });
+  }
+
   setInfo(i) {
     this.setState({ info: i });
   }
@@ -76,20 +119,37 @@ class App extends Component {
           rolUsuario={this.state.rolUsuario}
         />
       );
-      //Si está logueado aparecen ya los menus de 1,2,3
     } else {
-      obj.push(
-        <Menu
-          menuItem={this.state.menuItem}
-          changeMenu={(item) => this.changeMenu(item)}
-        />
-      );
-      //Tengo dos opciones aquí, o filtrar por nombre de usuario o por rol
-      obj.push(<Titulo titulo={this.state.titulo} />);
-      if (this.state.rolUsuario === 0)
-        obj.push(<Barraquita setTitulo={(t) => this.setTitulo(t)} />);
-        if (this.state.rolUsuario === 1)
-        obj.push(<Dos setTitulo={(t) => this.setTitulo(t)} />);
+      //Tengo dos opciones aquí, o filtrar por rol
+      if (this.state.rolUsuario === 1)
+        obj.push(
+          <MenuAdmin
+            menuItem={this.state.menuItem}
+            changeMenu={(item) => this.changeMenu(item)}
+          />
+        );
+        if(this.state.menuItem=="PANTALLAS"){
+          obj.push(<Pantallas 
+            setInfo={(i) => this.setInfo(i)}
+            info={this.state.info}
+            userInsert={(nombre,usuario, clave) => this.userInsert(nombre,usuario, clave)}
+            nombreUsuario={this.state.nombreUsuario}
+            idUsuario={this.state.idUsuario}
+            ></Pantallas>);
+        }else if(this.state.menuItem=="ANUNCIOS"){
+          obj.push(<Anuncios/>)
+        }
+      if (this.state.rolUsuario === 0){
+        obj.push(
+          <MenuUsuario
+            menuItem={this.state.menuItem}
+            changeMenu={(item) => this.changeMenu(item)}
+          />
+        );
+        obj.push(
+          <Anuncios></Anuncios>
+        )
+      }
     }
     return <div className="App">{obj}</div>;
   }

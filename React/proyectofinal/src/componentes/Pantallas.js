@@ -1,11 +1,15 @@
 import React, {useState} from 'react';
 import {Row,Col,Card,CardTitle,CardText,Form,FormGroup,Button,Label,Input} from 'reactstrap';
 
-export default function AppLogin(props) {
+export default function Pantallas(props) {
   const [clave,setClave]=useState('');
   const [usuario,setUsuario]=useState('');
+  const [nombre,setNombre]=useState('');
 
   const handleChange=(event)=>{
+    if (event.target.name=="nombre"){
+      setNombre(event.target.value)
+    }
     if (event.target.name=="usuario"){
       setUsuario(event.target.value)
     }
@@ -15,11 +19,11 @@ export default function AppLogin(props) {
   }
   //En caso de que esté vacío sale un mensaje
   const clicar=()=>{
-    if (clave==''||usuario==''){
+    if (nombre==""||clave==""||usuario==""){
       props.setInfo("NO PUEDE TENER CAMPOS VACÍOS")
       return;
     }
-    props.userLogin(usuario,clave)
+    props.userInsert(nombre,usuario,clave)
   }
 
     return (
@@ -31,12 +35,20 @@ export default function AppLogin(props) {
                Log in
              </CardTitle>
            <Form inline>
+           <FormGroup className="mb-2 me-sm-2 mb-sm-0">
+               <Label className="me-sm-2" for="nombre">Nombre</Label>
+               <Input
+                 id="nombre"
+                 name="nombre"
+                 type="text"
+                 onChange={handleChange}
+               />
+             </FormGroup>
              <FormGroup className="mb-2 me-sm-2 mb-sm-0">
-               <Label  className="me-sm-2" for="usuario">User id</Label>
+               <Label  className="me-sm-2" for="usuario">Usuario</Label>
                <Input
                  id="usuario"
                  name="usuario"
-                 placeholder="type your user id"
                  type="text"
                  onChange={handleChange}
                />
@@ -52,7 +64,7 @@ export default function AppLogin(props) {
              </FormGroup>
              <br/>
              <Button color="primary" size="lg" block  onClick={clicar}>
-               <strong>Log in</strong>
+               <strong>Alta</strong>
              </Button>
              <CardText className="text-danger">{props.info}</CardText>  
            </Form>
