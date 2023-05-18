@@ -5,7 +5,7 @@ import MenuUsuario from "./componentes/MenuUsuario";
 import AppLogin from "./componentes/AppLogin";
 import Pantallas from "./componentes/Pantallas";
 import Anuncios from "./componentes/Anuncios";
-import { PHPLOGIN,PHPINSERT } from "./componentes/Datos";
+import { PHPLOGIN,PHPINSERT, PHPLISTAR } from "./componentes/Datos";
 
 import axios from "axios";
 import md5 from "md5";
@@ -22,6 +22,7 @@ class App extends Component {
       nombreUsuario: "",
       rolUsuario: 0,
       idUsuario:'',
+      listaUsuarios:""
     };
   }
 
@@ -53,46 +54,48 @@ class App extends Component {
         }
       });
   }
-  /*userListar(){
+  //Listar
+  userListar(){
     axios
-      .post(
-        PHPLOGIN,
-        JSON.stringify({
-          usuario: usuario,
-          clave: md5(clave), //md5 para la contraseña
-        })
+      .get(
+        PHPLISTAR
       )
       .then((res) => {
         //En caso de que el mensaje sea positivo entra
         console.log(res);
         if (res.data.mensaje == "Acceso correcto") {
-          this.setState({idUsuario:res.data.id});
+          this.setState({idUsuario:res.data.idUsuario});
           this.setState({ nombreUsuario: res.data.nombre });
           this.setState({ usuario: res.data.usuario });
+          this.setState({listaUsuarios:res.data.listaUsuarios});
+          //console.log(this.state.idUsuario+" " + this.state.nombreUsuario+" "+ this.state.usuario);
+        
         } else {
           //En caso negativo indica que hay un error
           this.setState({ info: "Ups, hubo un error" });
         }
       });
-  }*/
+  }
   userInsert(nombre, usuario, clave){
     axios
       .post(
         PHPINSERT,
         JSON.stringify({
-          usuario: usuario,
-          clave: md5(clave), //md5 para la contraseña
+          nombre:nombre,
+          usuario:usuario,
+          clave:md5(clave)
         })
       )
       .then((res) => {
         //En caso de que el mensaje sea positivo entra
         console.log(res);
-        if (res.data.mensaje == "Insertado correctamente") {
+        if (res.data.mensaje == "hecho") {
           //Cambia el logueado a true
           this.setState({ info:"El usuario se ha insertado correctamente"});
         } else {
           //En caso negativo indica que hay un error
-          this.setState({ info: "Ups, hubo un error" });
+          this.setState({ info: "No se pudo insertar correctamente" });
+          
         }
       });
   }
@@ -107,6 +110,7 @@ class App extends Component {
   //renderizamos
   render() {
     let obj = [];
+    console.log(this.state.idUsuario);
     //Si no está logueado aparece el login
 
     if (!this.state.logged) {
@@ -133,6 +137,7 @@ class App extends Component {
             setInfo={(i) => this.setInfo(i)}
             info={this.state.info}
             userInsert={(nombre,usuario, clave) => this.userInsert(nombre,usuario, clave)}
+            userListar={() => this.userListar()}
             nombreUsuario={this.state.nombreUsuario}
             idUsuario={this.state.idUsuario}
             ></Pantallas>);
