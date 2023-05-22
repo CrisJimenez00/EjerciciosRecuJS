@@ -22,7 +22,7 @@ class App extends Component {
       nombreUsuario: "",
       rolUsuario: 0,
       idUsuario:'',
-      listaUsuarios:""
+      listaUsuarios:[]
     };
   }
 
@@ -55,27 +55,28 @@ class App extends Component {
       });
   }
   //Listar
-  userListar(){
+  userListar= async()=>{
     axios
       .get(
         PHPLISTAR
       )
       .then((res) => {
         //En caso de que el mensaje sea positivo entra
-        console.log(res);
-        if (res.data.mensaje == "Acceso correcto") {
+        //console.log(res);
+        if (res.data.mensaje === "Acceso correcto") {
           this.setState({idUsuario:res.data.idUsuario});
           this.setState({ nombreUsuario: res.data.nombre });
           this.setState({ usuario: res.data.usuario });
           this.setState({listaUsuarios:res.data.listaUsuarios});
-          //console.log(this.state.idUsuario+" " + this.state.nombreUsuario+" "+ this.state.usuario);
-        
+          
+        return this.state.listaUsuarios;
         } else {
           //En caso negativo indica que hay un error
           this.setState({ info: "Ups, hubo un error" });
         }
       });
   }
+
   userInsert(nombre, usuario, clave){
     axios
       .post(
@@ -132,16 +133,18 @@ class App extends Component {
             changeMenu={(item) => this.changeMenu(item)}
           />
         );
-        if(this.state.menuItem=="PANTALLAS"){
-          obj.push(<Pantallas 
-            setInfo={(i) => this.setInfo(i)}
-            info={this.state.info}
-            userInsert={(nombre,usuario, clave) => this.userInsert(nombre,usuario, clave)}
-            userListar={() => this.userListar()}
-            nombreUsuario={this.state.nombreUsuario}
-            idUsuario={this.state.idUsuario}
-            ></Pantallas>);
-        }else if(this.state.menuItem=="ANUNCIOS"){
+        if(this.state.menuItem==="PANTALLAS"){
+          obj.push(
+            <Pantallas 
+              setInfo={(i) => this.setInfo(i)}
+              info={this.state.info}
+              userInsert={(nombre, usuario, clave) => this.userInsert(nombre, usuario, clave)}
+              userListar={this.userListar}
+              nombreUsuario={this.state.nombreUsuario}
+              idUsuario={this.state.idUsuario}
+            ></Pantallas>
+          );
+        }else if(this.state.menuItem==="ANUNCIOS"){
           obj.push(<Anuncios/>)
         }
       if (this.state.rolUsuario === 0){

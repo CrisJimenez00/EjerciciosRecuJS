@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState} from "react";
 import { Table } from "reactstrap";
 import {
   Row,
@@ -38,13 +38,32 @@ export default function Pantallas(props) {
     props.userInsert(nombre, usuario, clave);
   };
   const listar = (props) => {
-    props.userListar();
-    
-     for (let i = 0; i < props.listaUsuarios.length; i++) {
-     <> <th><tr>{props.listaUsuarios[i]}</tr></th></>
-      
-     }
-     
+    try {
+      let usuarios = props.userListar;
+      console.log(props.usuarios);
+  
+      // Asegúrate de que usuarios sea un arreglo antes de utilizarlo
+      /*if (Array.isArray(usuarios)) {
+        const rows = usuarios.listaUsuarios.map((usuario) => (
+          <tr key={usuario.id}>
+            <td>{usuario.id}</td>
+            <td>{usuario.nombre}</td>
+            <td>{usuario.usuario}</td>
+            <td>
+              <Button>Borrar</Button>
+            </td>
+          </tr>
+        ));
+  
+        return <>{rows}</>;
+      } else {
+        console.error("No reconoce el array");
+        return null; // O devuelve algún otro valor adecuado para tu caso
+      }*/
+    } catch (error) {
+      console.error(error);
+      return null; // O devuelve algún otro valor adecuado para tu caso
+    }
   };
 
   return (
@@ -98,7 +117,6 @@ export default function Pantallas(props) {
         </Card>
       </Col>
 
-      <Col sm="15"></Col>
       <Col sm="15">
         <Table striped>
           <thead>
@@ -109,7 +127,7 @@ export default function Pantallas(props) {
               <th></th>
             </tr>
           </thead>
-          <tbody>{listar}</tbody>
+          <tbody>{listar(props)}</tbody>
         </Table>
       </Col>
     </Row>
