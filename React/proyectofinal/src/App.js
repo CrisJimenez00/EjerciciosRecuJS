@@ -5,7 +5,7 @@ import MenuUsuario from "./componentes/MenuUsuario";
 import AppLogin from "./componentes/AppLogin";
 import Pantallas from "./componentes/Pantallas";
 import Anuncios from "./componentes/Anuncios";
-import { PHPLOGIN,PHPINSERT, PHPLISTAR } from "./componentes/Datos";
+import { PHPLOGIN, PHPINSERT, PHPLISTAR, PHPBORRAR, PHPANUNCIOLISTAR } from "./componentes/Datos";
 
 import axios from "axios";
 import md5 from "md5";
@@ -21,15 +21,18 @@ class App extends Component {
       titulo: "",
       nombreUsuario: "",
       rolUsuario: 0,
-      idUsuario:'',
-      listaUsuarios:[]
+      idUsuario: "",
+      listaUsuarios: [],
     };
   }
 
   changeMenu(item) {
     this.setState({ menuItem: item });
   }
-
+  componentDidMount() {
+    this.userListar();
+    //this.userListarAnuncio(idUsuario);
+  }
   //El logueo
   userLogin(usuario, clave) {
     axios
@@ -42,7 +45,6 @@ class App extends Component {
       )
       .then((res) => {
         //En caso de que el mensaje sea positivo entra
-        console.log(res);
         if (res.data.mensaje == "Acceso correcto") {
           //Cambia el logueado a true
           this.setState({ logged: true });
@@ -54,49 +56,74 @@ class App extends Component {
         }
       });
   }
-  //Listar
-  userListar= async()=>{
+  //Borrar
+  userDelete(id_cliente) {
     axios
-      .get(
-        PHPLISTAR
-      )
-      .then((res) => {
-        //En caso de que el mensaje sea positivo entra
-        //console.log(res);
-        if (res.data.mensaje === "Acceso correcto") {
-          this.setState({idUsuario:res.data.idUsuario});
-          this.setState({ nombreUsuario: res.data.nombre });
-          this.setState({ usuario: res.data.usuario });
-          this.setState({listaUsuarios:res.data.listaUsuarios});
-          
-        return this.state.listaUsuarios;
-        } else {
-          //En caso negativo indica que hay un error
-          this.setState({ info: "Ups, hubo un error" });
-        }
-      });
-  }
-
-  userInsert(nombre, usuario, clave){
-    axios
-      .post(
-        PHPINSERT,
+      .delete(
+        PHPBORRAR,
         JSON.stringify({
-          nombre:nombre,
-          usuario:usuario,
-          clave:md5(clave)
+          idUsuario: id_cliente,
         })
       )
       .then((res) => {
         //En caso de que el mensaje sea positivo entra
-        console.log(res);
+        if (res.data.mensaje == "Se ha eliminado correctamente") {
+          //Cambia el logueado a true
+          this.setState({ info: res.data.mensaje });
+          console.log(id_cliente);
+          setTimeout(() => {
+            // Función que se ejecutará después del tiempo especificado
+            this.setState({ listaUsuarios: this.props.listaUsuarios});
+          }, 1500);
+        } else {
+          //En caso negativo indica que hay un error
+          this.setState({ info: "Ups, hubo un error" });
+          console.log(id_cliente + "------------");
+        }
+      });
+  }
+  //Listar
+  userListar = async () => {
+    axios.get(PHPLISTAR).then((res) => {
+      //En caso de que el mensaje sea positivo entra
+      const usuario = res.data.listaUsuarios;
+      //console.log(res);
+      this.setState({ listaUsuarios: usuario });
+    });
+  };
+  userListarAnuncio = async (id_cliente) => {
+    axios.get(
+      PHPANUNCIOLISTAR,
+      JSON.stringify({
+        idUsuario:id_cliente
+      })
+    ).then((res) => {
+      //En caso de que el mensaje sea positivo entra
+      const usuario = res.data.listaUsuarios;
+      //console.log(res);
+      this.setState({ listaUsuarios: usuario });
+    });
+  };
+
+  userInsert(nombre, usuario, clave) {
+    axios
+      .post(
+        PHPINSERT,
+        JSON.stringify({
+          nombre: nombre,
+          usuario: usuario,
+          clave: md5(clave),
+        })
+      )
+      .then((res) => {
+        //En caso de que el mensaje sea positivo entra
         if (res.data.mensaje == "hecho") {
           //Cambia el logueado a true
-          this.setState({ info:"El usuario se ha insertado correctamente"});
+          this.setState({ info: "El usuario se ha insertado correctamente" });
+          
         } else {
           //En caso negativo indica que hay un error
           this.setState({ info: "No se pudo insertar correctamente" });
-          
         }
       });
   }
@@ -111,7 +138,6 @@ class App extends Component {
   //renderizamos
   render() {
     let obj = [];
-    console.log(this.state.idUsuario);
     //Si no está logueado aparece el login
 
     if (!this.state.logged) {
@@ -133,30 +159,41 @@ class App extends Component {
             changeMenu={(item) => this.changeMenu(item)}
           />
         );
-        if(this.state.menuItem==="PANTALLAS"){
-          obj.push(
-            <Pantallas 
-              setInfo={(i) => this.setInfo(i)}
-              info={this.state.info}
-              userInsert={(nombre, usuario, clave) => this.userInsert(nombre, usuario, clave)}
-              userListar={this.userListar}
-              nombreUsuario={this.state.nombreUsuario}
-              idUsuario={this.state.idUsuario}
-            ></Pantallas>
-          );
-        }else if(this.state.menuItem==="ANUNCIOS"){
-          obj.push(<Anuncios/>)
+      if (this.state.menuItem === "PANTALLAS") {
+        obj.push(
+          <Pantallas
+            setInfo={(i) => this.setInfo(i)}
+            info={this.state.info}
+            userInsert={(nombre, usuario, clave) =>
+              this.userInsert(nombre, usuario, clave)
+            }
+            listaUsuarios={this.state.listaUsuarios}
+            userDelete={(x) =>
+              this.userDelete(x)}
+            nombreUsuario={this.state.nombreUsuario}
+            idUsuario={this.state.idUsuario}
+          ></Pantallas>
+        );
+      } else if (this.state.menuItem === "ANUNCIOS") {
+        obj.push(<Anuncios setInfo={(i) => this.setInfo(i)}
+        info={this.state.info}
+        userInsert={(nombre, usuario, clave) =>
+          this.userInsert(nombre, usuario, clave)
         }
-      if (this.state.rolUsuario === 0){
+        listaUsuarios={(id_cliente)=>this.state.userListarAnuncio(id_cliente)}
+        eliminarUsuario={(idUsuario) =>
+          this.userDelete(idUsuario)}
+        nombreUsuario={this.state.nombreUsuario}
+        idUsuario={this.state.idUsuario}/>);
+      }
+      if (this.state.rolUsuario === 0) {
         obj.push(
           <MenuUsuario
             menuItem={this.state.menuItem}
             changeMenu={(item) => this.changeMenu(item)}
           />
         );
-        obj.push(
-          <Anuncios></Anuncios>
-        )
+        obj.push(<Anuncios></Anuncios>);
       }
     }
     return <div className="App">{obj}</div>;

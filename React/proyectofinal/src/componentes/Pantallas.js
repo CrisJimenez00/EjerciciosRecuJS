@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import { Table } from "reactstrap";
 import {
   Row,
@@ -17,6 +17,7 @@ export default function Pantallas(props) {
   const [clave, setClave] = useState("");
   const [usuario, setUsuario] = useState("");
   const [nombre, setNombre] = useState("");
+  //props.listaUsuarios.map(x=>console.log(x));
 
   const handleChange = (event) => {
     if (event.target.name == "nombre") {
@@ -37,34 +38,32 @@ export default function Pantallas(props) {
     }
     props.userInsert(nombre, usuario, clave);
   };
-  const listar = (props) => {
+  function listar() {
     try {
-      let usuarios = props.userListar;
-      console.log(props.usuarios);
-  
+      let usuarios = props.listaUsuarios;
+
       // Asegúrate de que usuarios sea un arreglo antes de utilizarlo
-      /*if (Array.isArray(usuarios)) {
-        const rows = usuarios.listaUsuarios.map((usuario) => (
-          <tr key={usuario.id}>
-            <td>{usuario.id}</td>
+      if (Array.isArray(usuarios)) {
+        const rows = usuarios.map((usuario) => (
+          <tr key={usuario.id_cliente}>
+            <td>{usuario.id_cliente}</td>
             <td>{usuario.nombre}</td>
             <td>{usuario.usuario}</td>
             <td>
-              <Button>Borrar</Button>
+              <Button key={usuario.id_cliente} onClick={()=>props.userDelete(usuario.id_cliente)}>Borrar </Button>
             </td>
           </tr>
         ));
-  
         return <>{rows}</>;
       } else {
         console.error("No reconoce el array");
         return null; // O devuelve algún otro valor adecuado para tu caso
-      }*/
+      }
     } catch (error) {
       console.error(error);
       return null; // O devuelve algún otro valor adecuado para tu caso
     }
-  };
+  }
 
   return (
     <Row>
@@ -72,7 +71,7 @@ export default function Pantallas(props) {
       <Col sm="4">
         <Card body>
           <CardTitle className="text-center" tag="h4">
-            Log in
+            Alta de usuario
           </CardTitle>
           <Form inline>
             <FormGroup className="mb-2 me-sm-2 mb-sm-0">
@@ -127,7 +126,8 @@ export default function Pantallas(props) {
               <th></th>
             </tr>
           </thead>
-          <tbody>{listar(props)}</tbody>
+          <tbody>{listar()}
+          <tr><th colSpan={4}>{props.info}</th></tr></tbody>
         </Table>
       </Col>
     </Row>
