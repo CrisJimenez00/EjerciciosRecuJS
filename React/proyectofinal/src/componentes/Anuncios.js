@@ -13,26 +13,26 @@ import {
   Input,
 } from "reactstrap";
 
-export default function Uno(props) {
+export default function Anuncios(props) {
   const [clave, setClave] = useState("");
   const [usuario, setUsuario] = useState("");
   const [nombre, setNombre] = useState("");
   const [filtro, setFiltro] = useState("");
   const [usuarioAnuncio, setUsuarioAnuncio] = useState("");
-  let lista=props.listaUsuarios;
-  //props.listaUsuarios.map(x=>console.log(x));
+  let lista = props.listaUsuarios;
 
   const handleChange = (event) => {
-    if (event.target.name == "nombre") {
+    if (event.target.name === "nombre") {
       setNombre(event.target.value);
     }
-    if (event.target.name == "usuario") {
+    if (event.target.name === "usuario") {
       setUsuario(event.target.value);
     }
-    if (event.target.name == "clave") {
+    if (event.target.name === "clave") {
       setClave(event.target.value);
     }
   };
+
   //En caso de que esté vacío sale un mensaje
   const clicar = () => {
     if (nombre == "" || clave == "" || usuario == "") {
@@ -41,19 +41,22 @@ export default function Uno(props) {
     }
     props.userInsert(nombre, usuario, clave);
   };
+
   function listar() {
     try {
-      let usuarios = props.listaUsuarios;
+      let usuarios = props.listaUsuariosAnuncios;
 
       // Asegúrate de que usuarios sea un arreglo antes de utilizarlo
       if (Array.isArray(usuarios)) {
         const rows = usuarios.map((usuario) => (
-          <tr key={usuario.id_cliente}>
-            <td>{usuario.id_cliente}</td>
+          <tr key={usuario.id_anuncio}>
+            <td>{usuario.id_anuncio}</td>
             <td>{usuario.nombre}</td>
-            <td>{usuario.usuario}</td>
+            <td>{usuario.id_cliente}</td>
             <td>
-              <Button onClick={()=>props.eliminarUsuario(usuario.id_cliente)}>Borrar </Button>
+              <Button onClick={() => props.eliminarUsuario(usuario.id_cliente)}>
+                Borrar{" "}
+              </Button>
             </td>
           </tr>
         ));
@@ -67,7 +70,6 @@ export default function Uno(props) {
       return null; // O devuelve algún otro valor adecuado para tu caso
     }
   }
-
   return (
     <Row>
       <Col sm="4"></Col>
@@ -81,7 +83,7 @@ export default function Uno(props) {
               <Label className="me-sm-2" for="nombre">
                 Usuario
               </Label>
-              
+
               <Input
                 onChange={(x) => setUsuarioAnuncio(x.target.value)}
                 id="selectMulti"
@@ -89,10 +91,7 @@ export default function Uno(props) {
                 type="select"
               >
                 {lista.map((y) => {
-                  if (
-                    y.id_cliente ||
-                    y.nombre
-                  ) {
+                  if (y.id_cliente || y.nombre) {
                     return (
                       <option value={y.id_cliente}>
                         {y.id_cliente + " | " + y.nombre}
@@ -143,10 +142,12 @@ export default function Uno(props) {
               <th></th>
             </tr>
           </thead>
-          <tbody>{listar()}
-          <tr><th colSpan={4}>{props.info}</th></tr>
+          <tbody>
+            {listar()} {/* Llamada a la función listar */}
+            <tr>
+              <th colSpan={4}>{props.info}</th>
+            </tr>
           </tbody>
-
         </Table>
       </Col>
     </Row>

@@ -5,7 +5,13 @@ import MenuUsuario from "./componentes/MenuUsuario";
 import AppLogin from "./componentes/AppLogin";
 import Pantallas from "./componentes/Pantallas";
 import Anuncios from "./componentes/Anuncios";
-import { PHPLOGIN, PHPINSERT, PHPLISTAR, PHPBORRAR, PHPANUNCIOLISTAR } from "./componentes/Datos";
+import {
+  PHPLOGIN,
+  PHPINSERT,
+  PHPLISTAR,
+  PHPBORRAR,
+  PHPANUNCIOLISTAR,
+} from "./componentes/Datos";
 
 import axios from "axios";
 import md5 from "md5";
@@ -23,6 +29,7 @@ class App extends Component {
       rolUsuario: 0,
       idUsuario: "",
       listaUsuarios: [],
+      listaUsuariosAnuncios: [],
     };
   }
 
@@ -57,30 +64,12 @@ class App extends Component {
       });
   }
   //Borrar
-  userDelete(id_cliente) {
-    axios
-      .delete(
-        PHPBORRAR,
-        JSON.stringify({
-          idUsuario: id_cliente,
-        })
-      )
-      .then((res) => {
-        //En caso de que el mensaje sea positivo entra
-        if (res.data.mensaje == "Se ha eliminado correctamente") {
-          //Cambia el logueado a true
-          this.setState({ info: res.data.mensaje });
-          console.log(id_cliente);
-          setTimeout(() => {
-            // Función que se ejecutará después del tiempo especificado
-            this.setState({ listaUsuarios: this.props.listaUsuarios});
-          }, 1500);
-        } else {
-          //En caso negativo indica que hay un error
-          this.setState({ info: "Ups, hubo un error" });
-          console.log(id_cliente + "------------");
-        }
-      });
+  userDelete(idUsuario) {
+    axios.delete(PHPBORRAR, { data: { id_cliente: idUsuario } }).then((res) => {
+      setTimeout(() => {
+        this.userListar();
+      }, 100);
+    });
   }
   //Listar
   userListar = async () => {
@@ -91,18 +80,34 @@ class App extends Component {
       this.setState({ listaUsuarios: usuario });
     });
   };
-  userListarAnuncio = async (id_cliente) => {
-    axios.get(
-      PHPANUNCIOLISTAR,
-      JSON.stringify({
-        idUsuario:id_cliente
+  /*userListarAnuncio = async (id_cliente) => {
+    axios
+      .get(
+        PHPANUNCIOLISTAR,
+        JSON.stringify({
+          idUsuario: id_cliente,
+        })
+      )
+      .then((res) => {
+        const usuario = res.data.listaUsuarios;
+        this.setState({ listaUsuarios: usuario });
+      });
+  };*/
+  userListarAnuncio = async (idUsuario) => {
+    axios
+      .get(PHPANUNCIOLISTAR, {
+        params: {
+          idUsuario: idUsuario,
+        },
       })
-    ).then((res) => {
-      //En caso de que el mensaje sea positivo entra
-      const usuario = res.data.listaUsuarios;
-      //console.log(res);
-      this.setState({ listaUsuarios: usuario });
-    });
+      .then((res) => {
+        console.log(res.data);
+        const usuario = res.data.listaAnuncios; // utilizar listaAnuncios en lugar de listaUsuarios
+        this.setState({ listaUsuariosAnuncios: usuario });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   userInsert(nombre, usuario, clave) {
@@ -120,7 +125,6 @@ class App extends Component {
         if (res.data.mensaje == "hecho") {
           //Cambia el logueado a true
           this.setState({ info: "El usuario se ha insertado correctamente" });
-          
         } else {
           //En caso negativo indica que hay un error
           this.setState({ info: "No se pudo insertar correctamente" });
@@ -168,23 +172,40 @@ class App extends Component {
               this.userInsert(nombre, usuario, clave)
             }
             listaUsuarios={this.state.listaUsuarios}
-            userDelete={(x) =>
-              this.userDelete(x)}
+            userDelete={(x) => this.userDelete(x)}
             nombreUsuario={this.state.nombreUsuario}
             idUsuario={this.state.idUsuario}
           ></Pantallas>
         );
       } else if (this.state.menuItem === "ANUNCIOS") {
-        obj.push(<Anuncios setInfo={(i) => this.setInfo(i)}
-        info={this.state.info}
-        userInsert={(nombre, usuario, clave) =>
-          this.userInsert(nombre, usuario, clave)
-        }
-        listaUsuarios={(id_cliente)=>this.state.userListarAnuncio(id_cliente)}
-        eliminarUsuario={(idUsuario) =>
-          this.userDelete(idUsuario)}
-        nombreUsuario={this.state.nombreUsuario}
-        idUsuario={this.state.idUsuario}/>);
+        obj.push(
+          /*<Anuncios
+            setInfo={(i) => this.setInfo(i)}
+            info={this.state.info}
+            userInsert={(nombre, usuario, clave) =>
+              this.userInsert(nombre, usuario, clave)
+            }
+            listaUsuarios={this.state.listaUsuarios}
+            listaUsuariosAnuncios={(idUsuario) =>
+              this.state.userListarAnuncio(idUsuario)
+            }
+            eliminarUsuario={(idUsuario) => this.userDelete(idUsuario)}
+            nombreUsuario={this.state.nombreUsuario}
+            idUsuario={this.state.idUsuario}
+          />*/
+          <Anuncios
+            setInfo={(i) => this.setInfo(i)}
+            info={this.state.info}
+            userInsert={(nombre, usuario, clave) =>
+              this.userInsert(nombre, usuario, clave)
+            }
+            listaUsuarios={this.state.listaUsuarios}
+            userListarAnuncio={(idUsuario) => this.userListarAnuncio(idUsuario)}
+            eliminarUsuario={(idUsuario) => this.userDelete(idUsuario)}
+            nombreUsuario={this.state.nombreUsuario}
+            idUsuario={this.state.idUsuario}
+          />
+        );
       }
       if (this.state.rolUsuario === 0) {
         obj.push(
