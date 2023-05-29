@@ -11,6 +11,7 @@ import {
   PHPLISTAR,
   PHPBORRAR,
   PHPANUNCIOLISTAR,
+  PHPANUNCIOINSERT
 } from "./componentes/Datos";
 
 import axios from "axios";
@@ -110,6 +111,31 @@ class App extends Component {
       });
   };
 
+  //Insertar
+  anuncioInsert(orden, nombre, imagen, tiempo, precio, id_cliente) {
+    axios
+      .post(
+        PHPANUNCIOINSERT,
+        JSON.stringify({
+          orden: orden,
+          nombre: nombre,
+          imagen: imagen,
+          tiempo: tiempo,
+          id_cliente: id_cliente,
+        })
+      )
+      .then((res) => {
+        console.log(res.data);
+        //En caso de que el mensaje sea positivo entra
+        if (res.data.mensaje == "hecho") {
+          //Cambia el logueado a true
+          this.setState({ info: "El usuario se ha insertado correctamente" });
+        } else {
+          //En caso negativo indica que hay un error
+          this.setState({ info: "No se pudo insertar correctamente" });
+        }
+      });
+  }
   userInsert(nombre, usuario, clave) {
     axios
       .post(
@@ -179,25 +205,11 @@ class App extends Component {
         );
       } else if (this.state.menuItem === "ANUNCIOS") {
         obj.push(
-          /*<Anuncios
-            setInfo={(i) => this.setInfo(i)}
-            info={this.state.info}
-            userInsert={(nombre, usuario, clave) =>
-              this.userInsert(nombre, usuario, clave)
-            }
-            listaUsuarios={this.state.listaUsuarios}
-            listaUsuariosAnuncios={(idUsuario) =>
-              this.state.userListarAnuncio(idUsuario)
-            }
-            eliminarUsuario={(idUsuario) => this.userDelete(idUsuario)}
-            nombreUsuario={this.state.nombreUsuario}
-            idUsuario={this.state.idUsuario}
-          />*/
           <Anuncios
             setInfo={(i) => this.setInfo(i)}
             info={this.state.info}
-            userInsert={(nombre, usuario, clave) =>
-              this.userInsert(nombre, usuario, clave)
+            anuncioInsert={(orden, nombre, imagen, tiempo, id_cliente) =>
+              this.anuncioInsert(orden, nombre, imagen, tiempo, id_cliente)
             }
             listaUsuarios={this.state.listaUsuarios}
             userListarAnuncio={(idUsuario) => this.userListarAnuncio(idUsuario)}

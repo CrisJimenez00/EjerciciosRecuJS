@@ -16,50 +16,112 @@ import {
 export default function Anuncios(props) {
   const [clave, setClave] = useState("");
   const [usuario, setUsuario] = useState("");
+  const [imagen, setImagen] = useState("");
+  const [tiempo, setTiempo] = useState("");
   const [nombre, setNombre] = useState("");
+  let [orden, setOrden] = useState("");
+  const [ultimoOrden, setUltimoOrden] = useState("");
   const [filtro, setFiltro] = useState("");
   const [usuarioAnuncio, setUsuarioAnuncio] = useState("");
   let lista = props.listaUsuarios;
+  let lista2 = props.listaUsuariosAnuncios;
 
   const handleChange = (event) => {
-    if (event.target.name === "nombre") {
-      setNombre(event.target.value);
+    const { name, value } = event.target;
+    if (name === "imagen") {
+      setImagen(value);
     }
-    if (event.target.name === "usuario") {
-      setUsuario(event.target.value);
-    }
-    if (event.target.name === "clave") {
-      setClave(event.target.value);
+    if (name === "tiempo") {
+      setTiempo(value);
     }
   };
 
   //En caso de que esté vacío sale un mensaje
-  const clicar = () => {
-    if (nombre == "" || clave == "" || usuario == "") {
+  /*const clicar = () => {
+    if (imagen == "" || tiempo == "") {
       props.setInfo("NO PUEDE TENER CAMPOS VACÍOS");
       return;
     }
-    props.userInsert(nombre, usuario, clave);
+    let ordenImagen = orden++;
+    setOrden(orden => orden + 1);
+    props.anuncioInsert(ordenImagen, nombre, imagen, tiempo, usuarioAnuncio);
+  };*/
+  const clicar = () => {
+    if (imagen === "" || tiempo === "" || usuarioAnuncio === "") {
+      props.setInfo("NO PUEDE TENER CAMPOS VACÍOS");
+      return;
+    }
+    let ordenImagen = parseInt(ultimoOrden) + 1;
+    setOrden(ordenImagen);
+    props.anuncioInsert(ordenImagen, nombre, imagen, tiempo, usuarioAnuncio);
   };
 
-  function listar() {
+  /*function listar() {
     try {
       let usuarios = props.listaUsuariosAnuncios;
 
       // Asegúrate de que usuarios sea un arreglo antes de utilizarlo
       if (Array.isArray(usuarios)) {
-        const rows = usuarios.map((usuario) => (
-          <tr key={usuario.id_anuncio}>
-            <td>{usuario.id_anuncio}</td>
-            <td>{usuario.nombre}</td>
-            <td>{usuario.id_cliente}</td>
-            <td>
-              <Button onClick={() => props.eliminarUsuario(usuario.id_cliente)}>
-                Borrar{" "}
-              </Button>
-            </td>
-          </tr>
-        ));
+        const rows = usuarios.map((usuario) => {
+          setUsuario(usuario.id_cliente);
+          setUltimoOrden(usuario.id_anuncio);
+          if (usuario.id_cliente === usuarioAnuncio) {
+            // Filtrar anuncios por usuario seleccionado
+            return (
+              <tr key={usuario.id_anuncio}>
+                <td>{usuario.id_anuncio}</td>
+                <td>{usuario.nombre}</td>
+                <td>{usuario.id_cliente}</td>
+                <td>
+                  <Button
+                    onClick={() => props.eliminarUsuario(usuario.id_cliente)}
+                  >
+                    Borrar
+                  </Button>
+                </td>
+              </tr>
+            );
+          }
+          return null;
+        });
+        return <>{rows}</>;
+      } else {
+        console.error("No reconoce el array");
+        return null; // O devuelve algún otro valor adecuado para tu caso
+      }
+    } catch (error) {
+      console.error(error);
+      return null; // O devuelve algún otro valor adecuado para tu caso
+    }
+  }*/
+  function listar() {
+    try {
+      let usuarios = props.listaUsuariosAnuncios;
+      console.log(usuarios);
+      // Asegúrate de que usuarios sea un arreglo antes de utilizarlo
+      if (Array.isArray(usuarios)) {
+        const rows = usuarios.map((usuario) => {
+          setUsuario(usuario.id_cliente);
+          setUltimoOrden(usuario.id_anuncio);
+          if (usuario.id_cliente === usuarioAnuncio) {
+            // Filtrar anuncios por usuario seleccionado
+            return (
+              <tr key={usuario.id_anuncio}>
+                <td>{usuario.id_anuncio}</td>
+                <td>{usuario.nombre}</td>
+                <td>{usuario.id_cliente}</td>
+                <td>
+                  <Button
+                    onClick={() => props.eliminarUsuario(usuario.id_cliente)}
+                  >
+                    Borrar
+                  </Button>
+                </td>
+              </tr>
+            );
+          }
+          return null;
+        });
         return <>{rows}</>;
       } else {
         console.error("No reconoce el array");
@@ -84,12 +146,33 @@ export default function Anuncios(props) {
                 Usuario
               </Label>
 
-              <Input
+              {/*Recoge aquí el id del usuario */}
+              {/* <Input
                 onChange={(x) => setUsuarioAnuncio(x.target.value)}
                 id="selectMulti"
                 name="selectMulti"
                 type="select"
               >
+                {lista.map((y) => {
+                  if (y.id_cliente || y.nombre) {
+                    return (
+                      <option value={y.id_cliente}>
+                        {y.id_cliente + " | " + y.nombre}
+                      </option>
+                    );
+                  }
+                })}
+              </Input> */}
+              <Input
+               onChange={(x) => {
+                setUsuarioAnuncio(x.target.value);
+                props.userListarAnuncio(x.target.value); // Agregar esta línea
+              }}
+                id="selectMulti"
+                name="selectMulti"
+                type="select"
+              >
+                <option value="">Seleccionar usuario</option>
                 {lista.map((y) => {
                   if (y.id_cliente || y.nombre) {
                     return (
@@ -107,7 +190,7 @@ export default function Anuncios(props) {
               </Label>
               <Input
                 id="imagen"
-                name="imagen"
+                name="imagen" // nombre del campo para imagen
                 type="text"
                 onChange={handleChange}
               />
@@ -118,7 +201,7 @@ export default function Anuncios(props) {
               </Label>
               <Input
                 id="tiempo"
-                name="tiempo"
+                name="tiempo" // nombre del campo para tiempo
                 type="text"
                 onChange={handleChange}
               />
