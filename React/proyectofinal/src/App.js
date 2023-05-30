@@ -39,7 +39,7 @@ class App extends Component {
   }
   componentDidMount() {
     this.userListar();
-    //this.userListarAnuncio(idUsuario);
+    this.userListarAnuncio(this.state.idUsuario);
   }
   //El logueo
   userLogin(usuario, clave) {
@@ -95,24 +95,19 @@ class App extends Component {
       });
   };*/
   userListarAnuncio = async (idUsuario) => {
-    axios
-      .get(PHPANUNCIOLISTAR, {
-        params: {
-          idUsuario: idUsuario,
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-        const usuario = res.data.listaAnuncios; // utilizar listaAnuncios en lugar de listaUsuarios
-        this.setState({ listaUsuariosAnuncios: usuario });
-      })
-      .catch((error) => {
-        console.error(error);
+    try {
+      const response = await axios.post(PHPANUNCIOLISTAR, {
+        idUsuario: idUsuario
       });
+      const listaAnuncios = response.data.listaAnuncios; // Utiliza listaAnuncios en lugar de listaUsuarios
+      this.setState({ listaUsuariosAnuncios: listaAnuncios });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   //Insertar
-  anuncioInsert(orden, nombre, imagen, tiempo, precio, id_cliente) {
+  /*anuncioInsert(orden, nombre, imagen, tiempo, precio, id_cliente) {
     axios
       .post(
         PHPANUNCIOINSERT,
@@ -125,7 +120,7 @@ class App extends Component {
         })
       )
       .then((res) => {
-        console.log(res.data);
+        console.log(res.data+"*******");
         //En caso de que el mensaje sea positivo entra
         if (res.data.mensaje == "hecho") {
           //Cambia el logueado a true
@@ -135,7 +130,7 @@ class App extends Component {
           this.setState({ info: "No se pudo insertar correctamente" });
         }
       });
-  }
+  }*/
   userInsert(nombre, usuario, clave) {
     axios
       .post(
@@ -212,10 +207,8 @@ class App extends Component {
               this.anuncioInsert(orden, nombre, imagen, tiempo, id_cliente)
             }
             listaUsuarios={this.state.listaUsuarios}
-            userListarAnuncio={(idUsuario) => this.userListarAnuncio(idUsuario)}
-            eliminarUsuario={(idUsuario) => this.userDelete(idUsuario)}
-            nombreUsuario={this.state.nombreUsuario}
-            idUsuario={this.state.idUsuario}
+            userListarAnuncio={ this.userListarAnuncio}
+            listaAnuncios={this.state.listaUsuariosAnuncios}
           />
         );
       }
@@ -226,7 +219,6 @@ class App extends Component {
             changeMenu={(item) => this.changeMenu(item)}
           />
         );
-        obj.push(<Anuncios></Anuncios>);
       }
     }
     return <div className="App">{obj}</div>;
