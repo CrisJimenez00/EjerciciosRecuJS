@@ -55,14 +55,8 @@ export default function Anuncios(props) {
     const anuncioAnterior = anuncios[index - 1];
     [anuncios[index], anuncios[index - 1]] = [anuncioAnterior, anuncios[index]];
   
-    await actualizarAnunciosEnBaseDeDatos(
-      anuncios[index].id,
-      anuncios[index].orden
-    );
-    await actualizarAnunciosEnBaseDeDatos(
-      anuncioAnterior.id,
-      anuncioAnterior.orden
-    );
+    await actualizarAnunciosEnBaseDeDatos(anuncios[index].id, anuncios[index].orden);
+    await actualizarAnunciosEnBaseDeDatos(anuncioAnterior.id, anuncioAnterior.orden);
   
     setTimeout(() => {
       setLista2(anuncios); // Actualizar la variable de estado con el nuevo arreglo
