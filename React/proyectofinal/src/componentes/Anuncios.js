@@ -18,16 +18,14 @@ import {
 } from "../../src/componentes/Datos";
 
 export default function Anuncios(props) {
-  const [anuncios, setAnuncios] = useState([]);
-
+  const [anuncios, setAnuncio] = useState("");
   const [imagen, setImagen] = useState("");
   const [tiempo, setTiempo] = useState("");
-  const [nombre, setNombre] = useState("");
   const [ultimoOrden, setUltimoOrden] = useState("");
-  const [filtro, setFiltro] = useState("");
   const [usuarioAnuncio, setUsuarioAnuncio] = useState("");
   const [lista2, setLista2] = useState([]);
   let lista = props.listaUsuarios;
+
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -46,7 +44,8 @@ export default function Anuncios(props) {
       return;
     }
     let ordenImagen = parseInt(ultimoOrden) + 1;
-    props.anuncioInsert(ordenImagen, nombre, imagen, tiempo, usuarioAnuncio);
+    props.anuncioInsert(ordenImagen, imagen, tiempo, usuarioAnuncio);
+
   };
 
   /*Funciona el listar pero la funcionalidad de los botones falla */
@@ -113,6 +112,63 @@ export default function Anuncios(props) {
       );
     }
   };
+  // const listar = () => {
+  //   try {
+  //     let anuncios = props.listaAnuncios;
+  //     console.log(anuncios);
+  //     // Asegúrate de que anuncios sea un arreglo antes de utilizarlo
+  //     if (Array.isArray(anuncios)) {
+  //       let usuarioActual = null;
+  //       let usuarioAnterior = null;
+  //       let usuarioSiguiente = null;
+
+  //       const listaAnuncios = anuncios.map((anuncio, index) => {
+  //         if (usuarioActual !== anuncio.id_cliente) {
+  //           usuarioActual = anuncio.id_cliente;
+  //           usuarioAnterior = null;
+  //           usuarioSiguiente = null;
+  //         }
+
+  //         if (index > 0) {
+  //           usuarioAnterior = anuncios[index - 1].id_cliente;
+  //         }
+
+  //         if (index < anuncios.length - 1) {
+  //           usuarioSiguiente = anuncios[index + 1].id_cliente;
+  //         }
+
+  //         return (
+  //           <tr key={anuncio.id_anuncio}>
+  //             <td>{anuncio.id_anuncio}</td>
+  //             <td>{anuncio.imagen}</td>
+  //             <td>{anuncio.id_cliente}</td>
+  //             <td>
+  //               {index > 0 && (
+  //                 <Button onClick={() => handleMoveUp(anuncios, index)}>
+  //                   <span>&uarr;</span>
+  //                 </Button>
+  //               )}
+  //               {index < anuncios.length - 1 && (
+  //                 <Button onClick={() => handleMoveDown(anuncios, index)}>
+  //                   <span>&darr;</span>
+  //                 </Button>
+  //               )}
+  //             </td>
+  //           </tr>
+  //         );
+  //       });
+
+  //       return listaAnuncios;
+  //     } else {
+  //       console.error("No se reconoce el array de anuncios");
+  //       return null; // O devuelve algún otro valor adecuado para tu caso
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     return null; // O devuelve algún otro valor adecuado para tu caso
+  //   }
+  // };
+
   const listar = () => {
     try {
       let anuncios = props.listaAnuncios;
@@ -122,22 +178,22 @@ export default function Anuncios(props) {
         let usuarioActual = null;
         let usuarioAnterior = null;
         let usuarioSiguiente = null;
-
+  
         const listaAnuncios = anuncios.map((anuncio, index) => {
           if (usuarioActual !== anuncio.id_cliente) {
             usuarioActual = anuncio.id_cliente;
             usuarioAnterior = null;
             usuarioSiguiente = null;
           }
-
+  
           if (index > 0) {
             usuarioAnterior = anuncios[index - 1].id_cliente;
           }
-
+  
           if (index < anuncios.length - 1) {
             usuarioSiguiente = anuncios[index + 1].id_cliente;
           }
-
+  
           return (
             <tr key={anuncio.id_anuncio}>
               <td>{anuncio.id_anuncio}</td>
@@ -158,7 +214,7 @@ export default function Anuncios(props) {
             </tr>
           );
         });
-
+  
         return listaAnuncios;
       } else {
         console.error("No se reconoce el array de anuncios");
@@ -169,6 +225,7 @@ export default function Anuncios(props) {
       return null; // O devuelve algún otro valor adecuado para tu caso
     }
   };
+  
   return (
     <Row>
       <Col sm="4"></Col>

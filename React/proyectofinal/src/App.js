@@ -81,19 +81,7 @@ class App extends Component {
       this.setState({ listaUsuarios: usuario });
     });
   };
-  /*userListarAnuncio = async (id_cliente) => {
-    axios
-      .get(
-        PHPANUNCIOLISTAR,
-        JSON.stringify({
-          idUsuario: id_cliente,
-        })
-      )
-      .then((res) => {
-        const usuario = res.data.listaUsuarios;
-        this.setState({ listaUsuarios: usuario });
-      });
-  };*/
+  
   userListarAnuncio = async (idUsuario) => {
     try {
       const response = await axios.post(PHPANUNCIOLISTAR, {
@@ -105,32 +93,46 @@ class App extends Component {
       console.error(error);
     }
   };
+  //Para actualizar la lista
+  actualizarListaAnuncios = async (idUsuario) => {
+    try {
+      await this.userListarAnuncio(idUsuario);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   //Insertar
-  /*anuncioInsert(orden, nombre, imagen, tiempo, precio, id_cliente) {
-    axios
-      .post(
-        PHPANUNCIOINSERT,
-        JSON.stringify({
-          orden: orden,
-          nombre: nombre,
-          imagen: imagen,
-          tiempo: tiempo,
-          id_cliente: id_cliente,
-        })
-      )
+  anuncioInsert(nombre, imagen, tiempo, id_cliente) {
+    // Obtener el último anuncio subido por el usuario
+    const ultimoAnuncio = this.state.listaUsuariosAnuncios[this.state.listaUsuariosAnuncios.length - 1];
+    const orden = ultimoAnuncio ? ultimoAnuncio.orden + 1 : 1;
+  
+    axios.post(
+      PHPANUNCIOINSERT,
+      JSON.stringify({
+        orden: orden,
+        imagen: imagen,
+        tiempo: tiempo,
+        id_cliente: id_cliente,
+      })
+    )
       .then((res) => {
-        console.log(res.data+"*******");
         //En caso de que el mensaje sea positivo entra
-        if (res.data.mensaje == "hecho") {
+        if (res.data.mensaje === "hecho") {
           //Cambia el logueado a true
           this.setState({ info: "El usuario se ha insertado correctamente" });
+          // Actualizar la lista de anuncios después de un tiempo específico
+          setTimeout(() => {
+            this.actualizarListaAnuncios(id_cliente);
+          }, 1000);
         } else {
           //En caso negativo indica que hay un error
           this.setState({ info: "No se pudo insertar correctamente" });
         }
       });
-  }*/
+  }
+  
   userInsert(nombre, usuario, clave) {
     axios
       .post(
@@ -144,8 +146,9 @@ class App extends Component {
       .then((res) => {
         //En caso de que el mensaje sea positivo entra
         if (res.data.mensaje == "hecho") {
-          //Cambia el logueado a true
+          //Cambia el logueado a  true
           this.setState({ info: "El usuario se ha insertado correctamente" });
+
         } else {
           //En caso negativo indica que hay un error
           this.setState({ info: "No se pudo insertar correctamente" });
@@ -203,8 +206,8 @@ class App extends Component {
           <Anuncios
             setInfo={(i) => this.setInfo(i)}
             info={this.state.info}
-            anuncioInsert={(orden, nombre, imagen, tiempo, id_cliente) =>
-              this.anuncioInsert(orden, nombre, imagen, tiempo, id_cliente)
+            anuncioInsert={(orden, imagen, tiempo, id_cliente) =>
+              this.anuncioInsert(orden, imagen, tiempo, id_cliente)
             }
             listaUsuarios={this.state.listaUsuarios}
             userListarAnuncio={ this.userListarAnuncio}
