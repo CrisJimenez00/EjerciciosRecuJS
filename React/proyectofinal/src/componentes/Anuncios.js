@@ -13,9 +13,7 @@ import {
   Input,
 } from "reactstrap";
 import axios from "axios";
-import {
-  PHPACTUALIZARORDEN
-} from "../../src/componentes/Datos";
+import { PHPACTUALIZARORDEN } from "../../src/componentes/Datos";
 
 export default function Anuncios(props) {
   const [anuncios, setAnuncio] = useState("");
@@ -24,8 +22,9 @@ export default function Anuncios(props) {
   const [ultimoOrden, setUltimoOrden] = useState("");
   const [usuarioAnuncio, setUsuarioAnuncio] = useState("");
   const [lista2, setLista2] = useState([]);
-  let lista = props.listaUsuarios;
+  const [anunciosOrdenados, setAnunciosOrdenados] = useState([]);
 
+  let lista = props.listaUsuarios;
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -45,33 +44,47 @@ export default function Anuncios(props) {
     }
     let ordenImagen = parseInt(ultimoOrden) + 1;
     props.anuncioInsert(ordenImagen, imagen, tiempo, usuarioAnuncio);
-
   };
 
   /*Funciona el listar pero la funcionalidad de los botones falla */
   const handleMoveUp = async (anuncios, index) => {
     if (index === 0) return;
-  
+
     const anuncioAnterior = anuncios[index - 1];
     [anuncios[index], anuncios[index - 1]] = [anuncioAnterior, anuncios[index]];
-  
-    await actualizarAnunciosEnBaseDeDatos(anuncios[index].id, anuncios[index].orden);
-    await actualizarAnunciosEnBaseDeDatos(anuncioAnterior.id, anuncioAnterior.orden);
-  
+
+    // Intercambiar los valores del campo 'orden' entre los anuncios
+    const tempOrden = anuncios[index].orden;
+    anuncios[index].orden = anuncioAnterior.orden;
+    anuncioAnterior.orden = tempOrden;
+
+    await actualizarAnunciosEnBaseDeDatos(
+      anuncios[index].id,
+      anuncios[index].orden
+    );
+    await actualizarAnunciosEnBaseDeDatos(
+      anuncioAnterior.id,
+      anuncioAnterior.orden
+    );
+
     setTimeout(() => {
-      setLista2(anuncios); // Actualizar la variable de estado con el nuevo arreglo
-    }, 500); // Esperar 500 milisegundos antes de actualizar la lista
+      setLista2([...anuncios]); // Actualizar la variable de estado con el nuevo arreglo
+    }, 700);
   };
-  
   const handleMoveDown = async (anuncios, index) => {
     if (index === anuncios.length - 1) return;
-  
+
     const anuncioSiguiente = anuncios[index + 1];
     [anuncios[index], anuncios[index + 1]] = [
       anuncioSiguiente,
       anuncios[index],
     ];
-  
+
+    // Intercambiar los valores del campo 'orden' entre los anuncios
+    const tempOrden = anuncios[index].orden;
+    anuncios[index].orden = anuncioSiguiente.orden;
+    anuncioSiguiente.orden = tempOrden;
+
     await actualizarAnunciosEnBaseDeDatos(
       anuncios[index].id,
       anuncios[index].orden
@@ -80,23 +93,18 @@ export default function Anuncios(props) {
       anuncioSiguiente.id,
       anuncioSiguiente.orden
     );
-  
+
     setTimeout(() => {
-      setLista2(anuncios); // Actualizar la variable de estado con el nuevo arreglo
-    }, 500); // Esperar 500 milisegundos antes de actualizar la lista
+      setLista2([...anuncios]); // Actualizar la variable de estado con el nuevo arreglo
+    }, 700);
   };
-  
-  const actualizarAnunciosEnBaseDeDatos = async () => {
+
+  const actualizarAnunciosEnBaseDeDatos = async (id, nuevoOrden) => {
     try {
-      const actualizaciones = lista2.map((anuncio) => ({
-        id: anuncio.id_anuncio,
-        nuevoOrden: anuncio.orden,
-      }));
+      const actualizaciones = [{ id: id, nuevoOrden: nuevoOrden }];
   
-      await axios.post(
-        PHPACTUALIZARORDEN,
-        actualizaciones
-      );
+      const response = await axios.post(PHPACTUALIZARORDEN, actualizaciones);
+      console.log(response);
   
       console.log("Orden de anuncios actualizado en la base de datos");
     } catch (error) {
@@ -106,62 +114,6 @@ export default function Anuncios(props) {
       );
     }
   };
-  // const listar = () => {
-  //   try {
-  //     let anuncios = props.listaAnuncios;
-  //     console.log(anuncios);
-  //     // Asegúrate de que anuncios sea un arreglo antes de utilizarlo
-  //     if (Array.isArray(anuncios)) {
-  //       let usuarioActual = null;
-  //       let usuarioAnterior = null;
-  //       let usuarioSiguiente = null;
-
-  //       const listaAnuncios = anuncios.map((anuncio, index) => {
-  //         if (usuarioActual !== anuncio.id_cliente) {
-  //           usuarioActual = anuncio.id_cliente;
-  //           usuarioAnterior = null;
-  //           usuarioSiguiente = null;
-  //         }
-
-  //         if (index > 0) {
-  //           usuarioAnterior = anuncios[index - 1].id_cliente;
-  //         }
-
-  //         if (index < anuncios.length - 1) {
-  //           usuarioSiguiente = anuncios[index + 1].id_cliente;
-  //         }
-
-  //         return (
-  //           <tr key={anuncio.id_anuncio}>
-  //             <td>{anuncio.id_anuncio}</td>
-  //             <td>{anuncio.imagen}</td>
-  //             <td>{anuncio.id_cliente}</td>
-  //             <td>
-  //               {index > 0 && (
-  //                 <Button onClick={() => handleMoveUp(anuncios, index)}>
-  //                   <span>&uarr;</span>
-  //                 </Button>
-  //               )}
-  //               {index < anuncios.length - 1 && (
-  //                 <Button onClick={() => handleMoveDown(anuncios, index)}>
-  //                   <span>&darr;</span>
-  //                 </Button>
-  //               )}
-  //             </td>
-  //           </tr>
-  //         );
-  //       });
-
-  //       return listaAnuncios;
-  //     } else {
-  //       console.error("No se reconoce el array de anuncios");
-  //       return null; // O devuelve algún otro valor adecuado para tu caso
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //     return null; // O devuelve algún otro valor adecuado para tu caso
-  //   }
-  // };
 
   const listar = () => {
     try {
@@ -172,22 +124,22 @@ export default function Anuncios(props) {
         let usuarioActual = null;
         let usuarioAnterior = null;
         let usuarioSiguiente = null;
-  
+
         const listaAnuncios = anuncios.map((anuncio, index) => {
           if (usuarioActual !== anuncio.id_cliente) {
             usuarioActual = anuncio.id_cliente;
             usuarioAnterior = null;
             usuarioSiguiente = null;
           }
-  
+
           if (index > 0) {
             usuarioAnterior = anuncios[index - 1].id_cliente;
           }
-  
+
           if (index < anuncios.length - 1) {
             usuarioSiguiente = anuncios[index + 1].id_cliente;
           }
-  
+
           return (
             <tr key={anuncio.id_anuncio}>
               <td>{anuncio.id_anuncio}</td>
@@ -208,7 +160,7 @@ export default function Anuncios(props) {
             </tr>
           );
         });
-  
+
         return listaAnuncios;
       } else {
         console.error("No se reconoce el array de anuncios");
@@ -219,7 +171,7 @@ export default function Anuncios(props) {
       return null; // O devuelve algún otro valor adecuado para tu caso
     }
   };
-  
+
   return (
     <Row>
       <Col sm="4"></Col>
