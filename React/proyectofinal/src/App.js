@@ -88,12 +88,18 @@ class App extends Component {
       const response = await axios.post(PHPANUNCIOLISTAR, {
         idUsuario: idUsuario,
       });
-      const listaAnuncios = response.data.listaAnuncios; // Utiliza listaAnuncios en lugar de listaUsuarios
+      const listaAnuncios = response.data.listaAnuncios;
+  
+      // Ordenar la lista de anuncios según el campo "orden"
+      listaAnuncios.sort((a, b) => a.orden - b.orden);
+  
       this.setState({ listaUsuariosAnuncios: listaAnuncios });
+      this.setState({ info: "" });
     } catch (error) {
       console.error(error);
     }
   };
+  
   //Para actualizar la lista
   actualizarListaAnuncios = async (idUsuario) => {
     try {
@@ -126,10 +132,11 @@ class App extends Component {
         //En caso de que el mensaje sea positivo entra
         if (res.data.mensaje === "hecho") {
           //Cambia el logueado a true
-          this.setState({ info: "El usuario se ha insertado correctamente" });
+          this.setState({ info: "El anuncio se ha insertado correctamente" });
           // Actualizar la lista de anuncios después de un tiempo específico
           setTimeout(() => {
             this.actualizarListaAnuncios(id_cliente);
+            this.setState({ info:""});
           }, 1000);
         } else {
           //En caso negativo indica que hay un error
@@ -153,6 +160,10 @@ class App extends Component {
         if (res.data.mensaje == "hecho") {
           //Cambia el logueado a  true
           this.setState({ info: "El usuario se ha insertado correctamente" });
+          setTimeout(() => {
+            this.userListar();
+            this.setState({ info:""});
+          }, 100);
         } else {
           //En caso negativo indica que hay un error
           this.setState({ info: "No se pudo insertar correctamente" });

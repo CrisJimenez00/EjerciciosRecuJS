@@ -21,8 +21,8 @@ export default function Anuncios(props) {
   const [tiempo, setTiempo] = useState("");
   const [ultimoOrden, setUltimoOrden] = useState("");
   const [usuarioAnuncio, setUsuarioAnuncio] = useState("");
-  const [lista2, setLista2] = useState([]);
-  const [anunciosOrdenados, setAnunciosOrdenados] = useState([]);
+  // const [lista2, setLista2] = useState([]);
+  // const [anunciosOrdenados, setAnunciosOrdenados] = useState([]);
 
   let lista = props.listaUsuarios;
 
@@ -47,63 +47,136 @@ export default function Anuncios(props) {
   };
 
   /*Funciona el listar pero la funcionalidad de los botones falla */
+
+
+  // const handleMoveUp = async (anuncios, index) => {
+  //   if (index === 0) return;
+  
+  //   const anuncioAnterior = anuncios[index - 1];
+  //   [anuncios[index], anuncios[index - 1]] = [anuncioAnterior, anuncios[index]];
+  
+  //   // Intercambiar los valores del campo 'orden' entre los anuncios
+  //   const tempOrden = anuncios[index].orden;
+  //   anuncios[index].orden = anuncioAnterior.orden;
+  //   anuncioAnterior.orden = tempOrden;
+  
+  //   await actualizarAnunciosEnBaseDeDatos(
+  //     anuncios[index].id_anuncio,
+  //     anuncios[index].orden
+  //   );
+  //   await actualizarAnunciosEnBaseDeDatos(
+  //     anuncioAnterior.id_anuncio,
+  //     anuncioAnterior.orden
+  //   );
+  
+  //   setTimeout(() => {
+  //     setAnuncio([...anuncios]); // Actualizar la variable de estado con el nuevo cambio
+  //   }, 700);
+  // };
+  
+  // const handleMoveDown = async (anuncios, index) => {
+  //   if (index === anuncios.length - 1) return;
+  
+  //   const anuncioSiguiente = anuncios[index + 1];
+  //   [anuncios[index], anuncios[index + 1]] = [
+  //     anuncioSiguiente,
+  //     anuncios[index],
+  //   ];
+  
+  //   // Intercambiar los valores del campo 'orden' entre los anuncios
+  //   const tempOrden = anuncios[index].orden;
+  //   anuncios[index].orden = anuncioSiguiente.orden;
+  //   anuncioSiguiente.orden = tempOrden;
+  
+  //   await actualizarAnunciosEnBaseDeDatos(
+  //     anuncios[index].id_anuncio,
+  //     anuncios[index].orden
+  //   );
+  //   await actualizarAnunciosEnBaseDeDatos(
+  //     anuncioSiguiente.id_anuncio,
+  //     anuncioSiguiente.orden
+  //   );
+  
+  //   setTimeout(() => {
+  //     setAnuncio([...anuncios]); // Actualizar la variable de estado con el nuevo cambio
+  //   }, 700);
+  // };
   const handleMoveUp = async (anuncios, index) => {
     if (index === 0) return;
-
+  
     const anuncioAnterior = anuncios[index - 1];
     [anuncios[index], anuncios[index - 1]] = [anuncioAnterior, anuncios[index]];
-
+  
     // Intercambiar los valores del campo 'orden' entre los anuncios
     const tempOrden = anuncios[index].orden;
     anuncios[index].orden = anuncioAnterior.orden;
     anuncioAnterior.orden = tempOrden;
-
+  
     await actualizarAnunciosEnBaseDeDatos(
-      anuncios[index].id,
+      anuncios[index].id_anuncio,
       anuncios[index].orden
     );
     await actualizarAnunciosEnBaseDeDatos(
-      anuncioAnterior.id,
+      anuncioAnterior.id_anuncio,
       anuncioAnterior.orden
     );
-
+  
     setTimeout(() => {
-      setLista2([...anuncios]); // Actualizar la variable de estado con el nuevo arreglo
+      setAnuncio([...anuncios]); // Actualizar la variable de estado con el nuevo cambio
     }, 700);
   };
+  
   const handleMoveDown = async (anuncios, index) => {
     if (index === anuncios.length - 1) return;
-
+  
     const anuncioSiguiente = anuncios[index + 1];
     [anuncios[index], anuncios[index + 1]] = [
       anuncioSiguiente,
       anuncios[index],
     ];
-
+  
     // Intercambiar los valores del campo 'orden' entre los anuncios
     const tempOrden = anuncios[index].orden;
     anuncios[index].orden = anuncioSiguiente.orden;
     anuncioSiguiente.orden = tempOrden;
-
+  
     await actualizarAnunciosEnBaseDeDatos(
-      anuncios[index].id,
+      anuncios[index].id_anuncio,
       anuncios[index].orden
     );
     await actualizarAnunciosEnBaseDeDatos(
-      anuncioSiguiente.id,
+      anuncioSiguiente.id_anuncio,
       anuncioSiguiente.orden
     );
-
+  
     setTimeout(() => {
-      setLista2([...anuncios]); // Actualizar la variable de estado con el nuevo arreglo
+      setAnuncio([...anuncios]); // Actualizar la variable de estado con el nuevo cambio
     }, 700);
   };
 
-  const actualizarAnunciosEnBaseDeDatos = async (id, nuevoOrden) => {
-    try {
-      const actualizaciones = [{ id: id, nuevoOrden: nuevoOrden }];
   
-      const response = await axios.post(PHPACTUALIZARORDEN, actualizaciones);
+  // const actualizarAnunciosEnBaseDeDatos = async (id_anuncio, nuevoOrden) => {
+  //   try {
+  //     const response = await axios.post(PHPACTUALIZARORDEN, {
+  //       id_anuncio: id_anuncio,
+  //       nuevoOrden: nuevoOrden
+  //     });
+  //     console.log(response);
+  
+  //     console.log("Orden de anuncios actualizado en la base de datos");
+  //   } catch (error) {
+  //     console.error(
+  //       "Error al actualizar el orden de anuncios en la base de datos:",
+  //       error
+  //     );
+  //   }
+  // };
+  const actualizarAnunciosEnBaseDeDatos = async (id_anuncio, nuevoOrden) => {
+    try {
+      const response = await axios.post(PHPACTUALIZARORDEN, {
+        id_anuncio: id_anuncio,
+        nuevoOrden: nuevoOrden
+      });
       console.log(response);
   
       console.log("Orden de anuncios actualizado en la base de datos");
@@ -114,32 +187,92 @@ export default function Anuncios(props) {
       );
     }
   };
+  
+  
 
+  // const listar = () => {
+  //   try {
+  //     let anuncios = props.listaAnuncios;
+  //     console.log(anuncios);
+  //     // Asegúrate de que anuncios sea un cambio antes de utilizarlo
+  //     if (Array.isArray(anuncios)) {
+  //       let usuarioActual = null;
+  //       let usuarioAnterior = null;
+  //       let usuarioSiguiente = null;
+
+  //       const listaAnuncios = anuncios.map((anuncio, index) => {
+  //         if (usuarioActual !== anuncio.id_cliente) {
+  //           usuarioActual = anuncio.id_cliente;
+  //           usuarioAnterior = null;
+  //           usuarioSiguiente = null;
+  //         }
+
+  //         if (index > 0) {
+  //           usuarioAnterior = anuncios[index - 1].id_cliente;
+  //         }
+
+  //         if (index < anuncios.length - 1) {
+  //           usuarioSiguiente = anuncios[index + 1].id_cliente;
+  //         }
+
+  //         return (
+  //           <tr key={anuncio.id_anuncio}>
+  //             <td>{anuncio.id_anuncio}</td>
+  //             <td>{anuncio.imagen}</td>
+  //             <td>{anuncio.id_cliente}</td>
+  //             <td>
+  //               {index > 0 && (
+  //                 <Button onClick={() => handleMoveUp(anuncios, index)}>
+  //                   <span>&uarr;</span>
+  //                 </Button>
+  //               )}
+  //               {index < anuncios.length - 1 && (
+  //                 <Button onClick={() => handleMoveDown(anuncios, index)}>
+  //                   <span>&darr;</span>
+  //                 </Button>
+  //               )}
+  //             </td>
+  //           </tr>
+  //         );
+  //       });
+
+  //       return listaAnuncios;
+  //     } else {
+  //       console.error("No se reconoce el array de anuncios");
+  //       return null; // O devuelve algún otro valor adecuado para tu caso
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     return null; // O devuelve algún otro valor adecuado para tu caso
+  //   }
+  // };
   const listar = () => {
     try {
       let anuncios = props.listaAnuncios;
       console.log(anuncios);
-      // Asegúrate de que anuncios sea un arreglo antes de utilizarlo
+      // Asegúrate de que anuncios sea un array antes de utilizarlo
       if (Array.isArray(anuncios)) {
+        //anuncios.sort((a, b) => a.orden - b.orden); // Ordenar el array de anuncios por el atributo 'orden'
+  
         let usuarioActual = null;
         let usuarioAnterior = null;
         let usuarioSiguiente = null;
-
+  
         const listaAnuncios = anuncios.map((anuncio, index) => {
           if (usuarioActual !== anuncio.id_cliente) {
             usuarioActual = anuncio.id_cliente;
             usuarioAnterior = null;
             usuarioSiguiente = null;
           }
-
+  
           if (index > 0) {
             usuarioAnterior = anuncios[index - 1].id_cliente;
           }
-
+  
           if (index < anuncios.length - 1) {
             usuarioSiguiente = anuncios[index + 1].id_cliente;
           }
-
+  
           return (
             <tr key={anuncio.id_anuncio}>
               <td>{anuncio.id_anuncio}</td>
@@ -160,7 +293,7 @@ export default function Anuncios(props) {
             </tr>
           );
         });
-
+  
         return listaAnuncios;
       } else {
         console.error("No se reconoce el array de anuncios");
@@ -171,6 +304,7 @@ export default function Anuncios(props) {
       return null; // O devuelve algún otro valor adecuado para tu caso
     }
   };
+  
 
   return (
     <Row>
